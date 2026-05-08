@@ -81,4 +81,36 @@
     background-size: 600px 100%;
     animation: shimmer 1.4s ease-in-out infinite;
   }
+
+  /* ── Fade-in on load ── */
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .animate-fade-in-up {
+    animation: fadeInUp 0.5s ease-out both;
+  }
+
+  /* ── Smooth image zoom on hover ── */
+  .img-zoom {
+    @apply overflow-hidden;
+  }
+  .img-zoom img {
+    @apply transition-transform duration-500 ease-out;
+  }
+  .img-zoom:hover img {
+    transform: scale(1.06);
+  }
+
+  /* ── Smooth link underline animation ── */
+  .link-hover {
+    @apply relative;
+  }
+  .link-hover::after {
+    content: '';
+    @apply absolute bottom-0 left-0 w-0 h-[1.5px] bg-accent-500 transition-all duration-300;
+  }
+  .link-hover:hover::after {
+    @apply w-full;
+  }
 }

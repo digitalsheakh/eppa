@@ -52,24 +52,39 @@ export default function Hero() {
           <div className="flex flex-row items-center gap-5 sm:gap-10 lg:gap-20">
 
             {/* Text */}
-            <div className="flex-1 min-w-0">
+            <motion.div
+              className="flex-1 min-w-0"
+              initial={{ opacity: 0, x: -30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+            >
               <h1 className="text-xl sm:text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4 sm:mb-7">
                 Premium Takeaway Bags Delivered Next Day
               </h1>
-              <div className="flex flex-col sm:flex-row gap-2.5 sm:gap-3">
+              <motion.div
+                className="flex flex-col sm:flex-row gap-2.5 sm:gap-3"
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
+              >
                 <Link href="/shop"
-                  className="inline-flex items-center justify-center gap-1.5 bg-accent-500 hover:bg-accent-600 text-white font-bold rounded-full transition-colors text-xs sm:text-sm px-4 sm:px-7 py-2.5 sm:py-3">
+                  className="inline-flex items-center justify-center gap-1.5 bg-accent-500 hover:bg-accent-600 hover:scale-105 text-white font-bold rounded-full transition-all duration-200 text-xs sm:text-sm px-4 sm:px-7 py-2.5 sm:py-3">
                   Shop Now <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
                 <Link href="/track-order"
-                  className="inline-flex items-center justify-center gap-1.5 border border-gray-200 hover:border-gray-300 text-gray-700 hover:text-gray-900 font-semibold rounded-full transition-colors text-xs sm:text-sm px-4 sm:px-7 py-2.5 sm:py-3 bg-white">
+                  className="inline-flex items-center justify-center gap-1.5 border border-gray-200 hover:border-gray-300 hover:scale-105 text-gray-700 hover:text-gray-900 font-semibold rounded-full transition-all duration-200 text-xs sm:text-sm px-4 sm:px-7 py-2.5 sm:py-3 bg-white">
                   <MapPin className="w-3.5 h-3.5" /> Track Order
                 </Link>
-              </div>
-            </div>
+              </motion.div>
+            </motion.div>
 
             {/* Image slider — no arrows, just dots */}
-            <div className="w-32 sm:w-56 lg:w-[400px] shrink-0">
+            <motion.div
+              className="w-32 sm:w-56 lg:w-[400px] shrink-0"
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.15, ease: [0.25, 0.1, 0.25, 1] }}
+            >
               <div className="relative aspect-square rounded-xl sm:rounded-2xl overflow-hidden border border-gray-100 bg-gray-50">
                 <AnimatePresence custom={dir} mode="wait">
                   {images.length > 0 && (
@@ -97,7 +112,7 @@ export default function Hero() {
                   </div>
                 )}
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>

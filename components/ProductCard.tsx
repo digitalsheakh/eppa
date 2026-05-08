@@ -29,11 +29,11 @@ export default function ProductCard({ product }: { product: Product }) {
     >
       {/* Image */}
       <Link href={`/shop/${productSlug(product.name, product.id)}`}
-        className="block relative overflow-hidden bg-gray-50 aspect-square">
+        className="block relative img-zoom bg-gray-50 aspect-square">
         <img
           src={imgSrc}
           alt={product.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover"
           onError={() => setImgError(true)}
         />
         {product.stock === 0 && (

@@ -35,7 +35,13 @@ export default function ProductsSection() {
     <section className="py-14 sm:py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Section header */}
-        <div className="flex items-end justify-between mb-8">
+        <motion.div
+          className="flex items-end justify-between mb-8"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+        >
           <div>
             <p className="eyebrow mb-2">Featured Products</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
@@ -48,7 +54,7 @@ export default function ProductsSection() {
               View all <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           )}
-        </div>
+        </motion.div>
 
         {/* Grid */}
         {loading ? (

@@ -65,7 +65,7 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center gap-0.5 ml-2">
             {NAV_LINKS.map(({ label, href }) => (
               <Link key={label} href={href}
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-colors whitespace-nowrap">
+                className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3 py-2 rounded-lg hover:bg-gray-50 transition-all duration-200 whitespace-nowrap link-hover">
                 {label}
               </Link>
             ))}

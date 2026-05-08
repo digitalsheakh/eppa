@@ -4,6 +4,7 @@ import { FaFacebookF, FaInstagram, FaYoutube, FaXTwitter } from 'react-icons/fa6
 import { SiVisa, SiMastercard, SiPaypal, SiAmericanexpress } from 'react-icons/si';
 import { Plus, Minus } from 'lucide-react';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Logo from './Logo';
 
 const SECTIONS = [
@@ -64,7 +65,7 @@ export default function Footer() {
             <div className="flex gap-2.5">
               {SOCIALS.map(({ icon: Icon, href, label }) => (
                 <a key={label} href={href} aria-label={label}
-                  className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center text-gray-500 hover:text-accent-500 hover:border-accent-400 transition-colors bg-white">
+                  className="w-8 h-8 border border-gray-300 rounded-full flex items-center justify-center text-gray-500 hover:text-accent-500 hover:border-accent-400 hover:scale-110 transition-all duration-200 bg-white">
                   <Icon className="w-3 h-3" />
                 </a>
               ))}
@@ -124,15 +125,23 @@ export default function Footer() {
               {title}
               {open === title ? <Minus className="w-4 h-4 text-gray-400" /> : <Plus className="w-4 h-4 text-gray-400" />}
             </button>
-            {open === title && (
-              <ul className="px-5 pb-4 space-y-3">
-                {links.map(([label, href]) => (
-                  <li key={label}>
-                    <Link href={href} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">{label}</Link>
-                  </li>
-                ))}
-              </ul>
-            )}
+            <AnimatePresence>
+              {open === title && (
+                <motion.ul
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: [0.25, 0.1, 0.25, 1] }}
+                  className="px-5 pb-4 space-y-3 overflow-hidden"
+                >
+                  {links.map(([label, href]) => (
+                    <li key={label} className="list-none">
+                      <Link href={href} className="text-sm text-gray-500 hover:text-gray-900 transition-colors">{label}</Link>
+                    </li>
+                  ))}
+                </motion.ul>
+              )}
+            </AnimatePresence>
           </div>
         ))}
       </div>

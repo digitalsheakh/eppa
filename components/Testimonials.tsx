@@ -1,4 +1,5 @@
 'use client';
+import { motion } from 'framer-motion';
 
 const REVIEWS = [
   {
@@ -39,7 +40,7 @@ function Stars() {
 
 function ReviewCard({ title, text, name, time }: typeof REVIEWS[0]) {
   return (
-    <div className="bg-[#f4f4f4] rounded-2xl p-5 flex flex-col gap-2 h-full">
+    <div className="bg-[#f4f4f4] rounded-2xl p-5 flex flex-col gap-2 h-full hover:shadow-md hover:-translate-y-1 transition-all duration-300">
       <Stars />
       <p className="font-bold text-gray-900 text-sm">{title}</p>
       <p className="text-sm text-gray-600 leading-relaxed flex-1">{text}</p>
@@ -52,15 +53,37 @@ export default function Testimonials() {
   return (
     <section className="bg-white border-t border-gray-100 py-10 sm:py-14">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-7">
+        <motion.div
+          className="text-center mb-7"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
+        >
           <p className="eyebrow mb-1.5">What Our Customers Say</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Trusted by 10,000+ Businesses</h2>
-        </div>
+        </motion.div>
 
         {/* Desktop grid */}
-        <div className="hidden sm:grid sm:grid-cols-4 gap-4">
-          {REVIEWS.map(r => <ReviewCard key={r.title} {...r} />)}
-        </div>
+        <motion.div
+          className="hidden sm:grid sm:grid-cols-4 gap-4"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
+        >
+          {REVIEWS.map(r => (
+            <motion.div
+              key={r.title}
+              variants={{
+                hidden: { opacity: 0, y: 25 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } },
+              }}
+            >
+              <ReviewCard {...r} />
+            </motion.div>
+          ))}
+        </motion.div>
 
         {/* Mobile slider — swipe horizontally */}
         <div className="sm:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 scrollbar-none">
