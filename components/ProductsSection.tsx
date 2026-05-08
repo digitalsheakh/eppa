@@ -1,6 +1,5 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { motion } from 'framer-motion';
 import ProductCard from './ProductCard';
 import { Product } from '@/lib/db';
 import Link from 'next/link';
@@ -35,13 +34,7 @@ export default function ProductsSection() {
     <section className="py-14 sm:py-20 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Section header */}
-        <motion.div
-          className="flex items-end justify-between mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        >
+        <div className="flex items-end justify-between mb-8">
           <div>
             <p className="eyebrow mb-2">Featured Products</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
@@ -54,7 +47,7 @@ export default function ProductsSection() {
               View all <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           )}
-        </motion.div>
+        </div>
 
         {/* Grid */}
         {loading ? (
@@ -67,20 +60,11 @@ export default function ProductsSection() {
             <p className="text-sm text-gray-400 max-w-xs">Products will appear here once added via the admin panel.</p>
           </div>
         ) : (
-          <motion.div
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, margin: '-40px' }}
-            variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.06 } } }}
-            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4"
-          >
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
             {products.slice(0, 10).map(p => (
-              <motion.div key={p.id}
-                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.45 } } }}>
-                <ProductCard product={p} />
-              </motion.div>
+              <ProductCard key={p.id} product={p} />
             ))}
-          </motion.div>
+          </div>
         )}
 
         {!loading && products.length > 0 && (

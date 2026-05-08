@@ -1,5 +1,4 @@
 'use client';
-import { motion } from 'framer-motion';
 
 const REVIEWS = [
   {
@@ -53,39 +52,17 @@ export default function Testimonials() {
   return (
     <section className="bg-white border-t border-gray-100 py-10 sm:py-14">
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <motion.div
-          className="text-center mb-7"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: [0.25, 0.1, 0.25, 1] }}
-        >
+        <div className="text-center mb-7">
           <p className="eyebrow mb-1.5">What Our Customers Say</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Trusted by 10,000+ Businesses</h2>
-        </motion.div>
+        </div>
 
         {/* Desktop grid */}
-        <motion.div
-          className="hidden sm:grid sm:grid-cols-4 gap-4"
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: '-40px' }}
-          variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.1 } } }}
-        >
-          {REVIEWS.map(r => (
-            <motion.div
-              key={r.title}
-              variants={{
-                hidden: { opacity: 0, y: 25 },
-                visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.25, 0.1, 0.25, 1] } },
-              }}
-            >
-              <ReviewCard {...r} />
-            </motion.div>
-          ))}
-        </motion.div>
+        <div className="hidden sm:grid sm:grid-cols-4 gap-4">
+          {REVIEWS.map(r => <ReviewCard key={r.title} {...r} />)}
+        </div>
 
-        {/* Mobile slider — swipe horizontally */}
+        {/* Mobile slider */}
         <div className="sm:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 scrollbar-none">
           {REVIEWS.map(r => (
             <div key={r.title} className="snap-start shrink-0 w-[80vw]">
