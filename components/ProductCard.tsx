@@ -1,5 +1,5 @@
 'use client';
-import { ShoppingCart, Check } from 'lucide-react';
+import { Check } from 'lucide-react';
 import { useCartStore } from '@/lib/cartStore';
 import { Product } from '@/lib/db';
 import { useState } from 'react';
@@ -19,30 +19,26 @@ export default function ProductCard({ product }: { product: Product }) {
     setTimeout(() => setAdded(false), 1600);
   };
 
-  const imgSrc = !imgError && product.image ? product.image : `https://placehold.co/400x400/f3f4f6/9ca3af?text=Bag`;
+  const imgSrc = !imgError && product.image ? product.image : `https://placehold.co/400x400/f8f8f8/999?text=Fragrance`;
 
   return (
-    <motion.div
-      whileHover={{ y: -3, boxShadow: '0 8px 24px rgba(0,0,0,0.10)' }}
-      transition={{ duration: 0.2 }}
-      className="bg-white rounded-xl border border-gray-100 overflow-hidden flex flex-col shadow-sm"
-    >
+    <div className="bg-white border border-gray-200 rounded-xl overflow-hidden flex flex-col group hover:border-gray-400 transition-colors">
       {/* Image */}
       <Link href={`/shop/${productSlug(product.name, product.id)}`}
-        className="block relative img-zoom bg-gray-50 aspect-square">
+        className="block relative bg-gray-50 aspect-square overflow-hidden">
         <img
           src={imgSrc}
           alt={product.name}
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           onError={() => setImgError(true)}
         />
         {product.stock === 0 && (
-          <div className="absolute inset-0 bg-white/75 flex items-center justify-center">
-            <span className="text-xs font-semibold text-gray-500 border border-gray-300 bg-white px-3 py-1 rounded-full">Out of Stock</span>
+          <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
+            <span className="text-xs font-semibold text-gray-600 border border-gray-300 bg-white px-3 py-1 rounded-full">Out of Stock</span>
           </div>
         )}
         {product.stock > 0 && product.stock <= 10 && (
-          <span className="absolute top-2 left-2 bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
+          <span className="absolute top-2 left-2 bg-black text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
             Only {product.stock} left
           </span>
         )}
@@ -50,40 +46,42 @@ export default function ProductCard({ product }: { product: Product }) {
 
       {/* Info */}
       <div className="p-3 flex flex-col flex-1">
-        <p className="text-[10px] text-accent-500 font-bold tracking-wider uppercase mb-0.5">per {product.unit}</p>
         <Link href={`/shop/${productSlug(product.name, product.id)}`}>
-          <h3 className="text-sm font-semibold text-gray-900 leading-snug line-clamp-2 mb-2 hover:text-primary-700 transition-colors">{product.name}</h3>
+          <h3 className="text-sm font-semibold text-black leading-snug line-clamp-2 mb-1 hover:underline">{product.name}</h3>
         </Link>
+        <p className="text-sm font-bold text-black mb-3">£{product.price.toFixed(2)}</p>
 
-        <div className="flex items-center justify-between gap-2 mt-auto pt-2 border-t border-gray-100">
-          <span className="text-base font-bold text-gray-900">£{product.price.toFixed(2)}</span>
-
+        <div className="flex gap-2 mt-auto">
           <motion.button
-            whileTap={{ scale: 0.92 }}
+            whileTap={{ scale: 0.95 }}
             onClick={handleAdd}
             disabled={product.stock === 0}
-            className={`flex items-center gap-1 text-xs font-bold px-3 py-1.5 rounded-full transition-all min-w-[68px] justify-center ${
+            className={`flex-1 text-xs font-semibold py-2 rounded-lg transition-colors ${
               added
-                ? 'bg-green-500 text-white'
+                ? 'bg-black text-white'
                 : product.stock === 0
                 ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                : 'bg-accent-500 text-white hover:bg-accent-600'
+                : 'bg-black hover:bg-gray-900 text-white'
             }`}
           >
             <AnimatePresence mode="wait">
               {added ? (
-                <motion.span key="c" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }} className="flex items-center gap-1">
-                  <Check className="w-3 h-3" /> Done
+                <motion.span key="c" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center justify-center gap-1">
+                  <Check className="w-3 h-3" /> Added
                 </motion.span>
               ) : (
-                <motion.span key="a" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="flex items-center gap-1">
-                  <ShoppingCart className="w-3 h-3" /> Add
+                <motion.span key="a" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
+                  Add
                 </motion.span>
               )}
             </AnimatePresence>
           </motion.button>
+          <Link href={`/shop/${productSlug(product.name, product.id)}`}
+            className="flex-1 text-xs font-semibold py-2 rounded-lg border border-gray-300 hover:border-black text-center transition-colors text-black">
+            Choose
+          </Link>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }

@@ -1,24 +1,12 @@
 'use client';
 import Link from 'next/link';
-import { ShoppingCart, Menu, X, Search, User, ChevronRight, Sparkles, LayoutGrid, MapPin, RefreshCw } from 'lucide-react';
+import { ShoppingBag, Search, X, ChevronRight, User, MapPin } from 'lucide-react';
 import { useCartStore } from '@/lib/cartStore';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, usePathname } from 'next/navigation';
 import Logo from './Logo';
 import CartDrawer from './CartDrawer';
-
-const NAV_LINKS = [
-  { label: 'All Products',  href: '/shop',               icon: LayoutGrid },
-  { label: 'Fragrances',   href: '/shop?q=fragrance',   icon: Sparkles },
-  { label: 'Track Order',  href: '/track-order',         icon: MapPin },
-];
-
-const ANNOUNCEMENTS = [
-  'Free delivery on orders over £50 🚚',
-  'Minimum order £20 — shop our fragrances today ✨',
-  'Trusted quality · Fast delivery · Easy returns 🌟',
-];
 
 export default function Navbar() {
   const { itemCount, openCart, isCartOpen } = useCartStore(s => ({
@@ -27,214 +15,149 @@ export default function Navbar() {
     isCartOpen: s.isCartOpen,
   }));
   const [open, setOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [searchVal, setSearchVal] = useState('');
-  const [annoIdx, setAnnoIdx] = useState(0);
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => { setOpen(false); }, [pathname]);
+  useEffect(() => { setOpen(false); setSearchOpen(false); }, [pathname]);
   useEffect(() => {
     document.body.style.overflow = (open || isCartOpen) ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [open, isCartOpen]);
 
-  useEffect(() => {
-    const t = setInterval(() => setAnnoIdx(i => (i + 1) % ANNOUNCEMENTS.length), 3500);
-    return () => clearInterval(t);
-  }, []);
-
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchVal.trim()) {
       router.push(`/shop?q=${encodeURIComponent(searchVal.trim())}`);
+      setSearchOpen(false);
       setOpen(false);
     }
   };
 
   return (
     <>
-      {/* Announcement strip — rotating */}
-      <div className="bg-gray-950 text-white overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-2 relative h-7 flex items-center justify-center">
-          <AnimatePresence mode="wait">
-            <motion.span
-              key={annoIdx}
-              initial={{ y: 20, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: -20, opacity: 0 }}
-              transition={{ duration: 0.4, ease: 'easeInOut' }}
-              className="absolute text-xs font-medium text-gray-200 tracking-wide text-center"
-            >
-              {ANNOUNCEMENTS[annoIdx]}
-            </motion.span>
-          </AnimatePresence>
-        </div>
-      </div>
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
 
-      {/* Main header */}
-      <header className="bg-white sticky top-0 z-40 border-b border-gray-100" style={{ boxShadow: '0 2px 20px rgba(0,0,0,0.06)' }}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-18 flex items-center gap-3">
-
-          {/* Logo */}
-          <Link href="/" className="shrink-0 flex items-center" aria-label="Eppa's Shop home">
-            <Logo width={160} height={44} />
+          {/* Logo — left */}
+          <Link href="/" className="shrink-0" aria-label="Eppa's Shop">
+            <Logo width={90} height={28} />
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden md:flex items-center gap-1 ml-4">
-            {NAV_LINKS.map(({ label, href }) => (
-              <Link key={label} href={href}
-                className="text-sm font-medium text-gray-600 hover:text-gray-900 px-3.5 py-2 rounded-xl hover:bg-gray-50 transition-all duration-200 whitespace-nowrap">
-                {label}
-              </Link>
-            ))}
-            <Link href="/account"
-              className="text-sm font-semibold text-accent-600 hover:text-accent-700 px-3.5 py-2 rounded-xl hover:bg-orange-50 transition-colors whitespace-nowrap flex items-center gap-1.5">
-              <RefreshCw className="w-3.5 h-3.5" /> Reorder
-            </Link>
+          {/* Desktop nav — centre */}
+          <nav className="hidden md:flex items-center gap-6">
+            <Link href="/" className="text-sm text-gray-700 hover:text-black transition-colors">Home</Link>
+            <Link href="/shop" className="text-sm text-gray-700 hover:text-black transition-colors">Shop</Link>
+            <Link href="/shop" className="text-sm text-gray-700 hover:text-black transition-colors">Contact</Link>
           </nav>
 
-          {/* Desktop search */}
-          <form onSubmit={handleSearch} className="hidden md:flex flex-1 mx-3 max-w-md">
-            <div className="flex w-full border border-gray-200 rounded-2xl overflow-hidden focus-within:border-accent-400 focus-within:ring-2 focus-within:ring-accent-100 transition-all bg-gray-50">
-              <input
-                type="text"
-                value={searchVal}
-                onChange={e => setSearchVal(e.target.value)}
-                placeholder="Search fragrances..."
-                className="flex-1 px-4 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 bg-transparent focus:outline-none"
-              />
-              <button type="submit"
-                className="bg-accent-500 hover:bg-accent-600 px-4 flex items-center justify-center shrink-0 rounded-2xl m-1 transition-colors">
-                <Search className="w-3.5 h-3.5 text-white" />
-              </button>
-            </div>
-          </form>
-
-          {/* Right actions */}
-          <div className="flex items-center gap-2 ml-auto md:ml-0">
-            <Link href="/account"
-              className="hidden md:flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors px-3 py-2 rounded-xl hover:bg-gray-50">
-              <User className="w-4 h-4" />
-              <span>Account</span>
-            </Link>
-
-            <button
-              onClick={openCart}
-              className="relative flex items-center gap-1.5 bg-accent-500 hover:bg-accent-600 active:bg-accent-700 text-white px-4 py-2 rounded-2xl transition-colors text-sm font-semibold shadow-sm shadow-accent-200">
-              <ShoppingCart className="w-4 h-4" />
-              <span className="hidden sm:block">Cart</span>
-              <AnimatePresence>
-                {itemCount > 0 && (
-                  <motion.span
-                    initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}
-                    className="bg-white text-accent-600 text-[9px] w-4 h-4 rounded-full flex items-center justify-center font-black leading-none">
-                    {itemCount}
-                  </motion.span>
+          {/* Right icons */}
+          <div className="flex items-center gap-3">
+            {/* Desktop search */}
+            <div className="hidden md:flex items-center">
+              <AnimatePresence mode="wait">
+                {searchOpen ? (
+                  <motion.form
+                    key="open"
+                    initial={{ width: 0, opacity: 0 }}
+                    animate={{ width: 220, opacity: 1 }}
+                    exit={{ width: 0, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                    onSubmit={handleSearch}
+                    className="flex items-center border border-gray-300 rounded-full overflow-hidden bg-white"
+                  >
+                    <input
+                      autoFocus
+                      type="text"
+                      value={searchVal}
+                      onChange={e => setSearchVal(e.target.value)}
+                      placeholder="Search..."
+                      className="flex-1 px-3 py-1.5 text-sm text-gray-900 focus:outline-none bg-transparent"
+                    />
+                    <button type="button" onClick={() => { setSearchOpen(false); setSearchVal(''); }}
+                      className="p-1.5 text-gray-400 hover:text-gray-700">
+                      <X className="w-3.5 h-3.5" />
+                    </button>
+                  </motion.form>
+                ) : (
+                  <motion.button key="closed" onClick={() => setSearchOpen(true)}
+                    className="p-1.5 text-gray-600 hover:text-black transition-colors">
+                    <Search className="w-4.5 h-4.5" style={{ width: 18, height: 18 }} />
+                  </motion.button>
                 )}
               </AnimatePresence>
+            </div>
+
+            <Link href="/account" className="hidden md:block p-1.5 text-gray-600 hover:text-black transition-colors">
+              <User style={{ width: 18, height: 18 }} />
+            </Link>
+
+            {/* Cart */}
+            <button onClick={openCart}
+              className="flex items-center gap-1.5 text-sm font-medium text-gray-900 hover:text-black transition-colors p-1.5">
+              <ShoppingBag style={{ width: 18, height: 18 }} />
+              <span className="text-sm font-semibold">{itemCount}</span>
             </button>
 
-            <button
-              className="md:hidden p-2 text-gray-600 rounded-xl hover:bg-gray-100 transition-colors"
-              onClick={() => setOpen(true)}
-              aria-label="Open menu">
-              <Menu className="w-5 h-5" />
+            {/* Mobile hamburger */}
+            <button className="md:hidden p-1.5 text-gray-600" onClick={() => setOpen(true)}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                <path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+              </svg>
             </button>
           </div>
         </div>
+
+        {/* Mobile search bar (always visible below nav on mobile) */}
+        <div className="md:hidden border-t border-gray-100 px-4 py-2">
+          <form onSubmit={handleSearch} className="flex items-center border border-gray-200 rounded-full overflow-hidden bg-gray-50">
+            <Search className="w-4 h-4 text-gray-400 ml-3 shrink-0" />
+            <input
+              type="text"
+              value={searchVal}
+              onChange={e => setSearchVal(e.target.value)}
+              placeholder="Search fragrances..."
+              className="flex-1 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 bg-transparent focus:outline-none"
+            />
+          </form>
+        </div>
       </header>
 
-      {/* Mobile nav drawer */}
+      {/* Mobile drawer */}
       <AnimatePresence>
         {open && (
           <>
             <motion.div key="bd"
               initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm md:hidden"
+              className="fixed inset-0 z-50 bg-black/40 md:hidden"
               onClick={() => setOpen(false)}
             />
             <motion.div key="dr"
-              initial={{ x: '100%' }} animate={{ x: 0 }} exit={{ x: '100%' }}
+              initial={{ x: '-100%' }} animate={{ x: 0 }} exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 28, stiffness: 280 }}
-              className="fixed top-0 right-0 h-full w-80 max-w-[88vw] bg-white z-50 flex flex-col shadow-2xl md:hidden"
+              className="fixed top-0 left-0 h-full w-72 bg-white z-50 flex flex-col shadow-2xl"
             >
-              {/* Drawer header */}
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gray-50">
-                <Logo width={140} height={38} />
-                <button onClick={() => setOpen(false)}
-                  className="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors">
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <Logo width={80} height={24} />
+                <button onClick={() => setOpen(false)} className="p-2 text-gray-400 hover:text-gray-700">
                   <X className="w-5 h-5" />
                 </button>
               </div>
-
-              {/* Search */}
-              <div className="px-4 pt-4 pb-2">
-                <form onSubmit={handleSearch}
-                  className="flex border border-gray-200 rounded-2xl overflow-hidden focus-within:border-accent-400 focus-within:ring-2 focus-within:ring-accent-100 bg-gray-50">
-                  <input type="text" value={searchVal} onChange={e => setSearchVal(e.target.value)}
-                    placeholder="Search fragrances..."
-                    className="flex-1 px-4 py-2.5 text-sm focus:outline-none bg-transparent text-gray-900 placeholder:text-gray-400" />
-                  <button type="submit"
-                    className="bg-accent-500 px-4 flex items-center justify-center rounded-2xl m-1 hover:bg-accent-600 transition-colors">
-                    <Search className="w-3.5 h-3.5 text-white" />
-                  </button>
-                </form>
-              </div>
-
-              <nav className="flex-1 overflow-y-auto px-3 py-2">
-                <p className="text-[10px] font-bold tracking-widest uppercase text-gray-400 px-2 mb-2">Shop</p>
-                {NAV_LINKS.map(({ label, href, icon: Icon }) => (
+              <nav className="flex-1 px-4 py-4 space-y-1">
+                {[['Home', '/'], ['Shop', '/shop'], ['Contact', '/shop'], ['Track Order', '/track-order'], ['My Account', '/account']].map(([label, href]) => (
                   <Link key={label} href={href} onClick={() => setOpen(false)}
-                    className="flex items-center gap-3 px-3 py-3 rounded-2xl text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-accent-600 transition-colors mb-1">
-                    <div className="w-9 h-9 bg-orange-50 rounded-xl flex items-center justify-center shrink-0">
-                      <Icon className="w-4 h-4 text-accent-500" />
-                    </div>
+                    className="flex items-center justify-between px-3 py-3 rounded-lg text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors">
                     {label}
-                    <ChevronRight className="w-4 h-4 text-gray-300 ml-auto" />
+                    <ChevronRight className="w-4 h-4 text-gray-300" />
                   </Link>
                 ))}
-
-                <div className="my-3 border-t border-gray-100" />
-                <p className="text-[10px] font-bold tracking-widest uppercase text-gray-400 px-2 mb-2">Account</p>
-
-                <Link href="/account" onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 px-3 py-3 rounded-2xl text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors mb-1">
-                  <div className="w-9 h-9 bg-gray-100 rounded-xl flex items-center justify-center shrink-0">
-                    <User className="w-4 h-4 text-gray-600" />
-                  </div>
-                  My Account
-                  <ChevronRight className="w-4 h-4 text-gray-300 ml-auto" />
-                </Link>
-
-                <Link href="/account" onClick={() => setOpen(false)}
-                  className="flex items-center gap-3 px-3 py-3 rounded-2xl text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-accent-600 transition-colors mb-1">
-                  <div className="w-9 h-9 bg-orange-50 rounded-xl flex items-center justify-center shrink-0">
-                    <RefreshCw className="w-4 h-4 text-accent-500" />
-                  </div>
-                  Reorder
-                  <ChevronRight className="w-4 h-4 text-gray-300 ml-auto" />
-                </Link>
-
-                <button onClick={() => { setOpen(false); openCart(); }}
-                  className="w-full flex items-center gap-3 px-3 py-3 rounded-2xl text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-accent-600 transition-colors mb-1">
-                  <div className="w-9 h-9 bg-orange-50 rounded-xl flex items-center justify-center shrink-0">
-                    <ShoppingCart className="w-4 h-4 text-accent-500" />
-                  </div>
-                  <span className="flex-1 text-left">View Cart</span>
-                  {itemCount > 0 && (
-                    <span className="bg-accent-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">{itemCount}</span>
-                  )}
-                  <ChevronRight className="w-4 h-4 text-gray-300" />
-                </button>
               </nav>
-
-              <div className="px-4 py-4 border-t border-gray-100 bg-gray-50">
+              <div className="px-4 py-4 border-t border-gray-100">
                 <button onClick={() => { setOpen(false); openCart(); }}
-                  className="w-full bg-accent-500 hover:bg-accent-600 text-white text-sm font-bold py-3.5 rounded-2xl flex items-center justify-center gap-2 transition-colors shadow-sm">
-                  <ShoppingCart className="w-4 h-4" /> View Cart &amp; Checkout
+                  className="w-full bg-black text-white text-sm font-semibold py-3 rounded-lg flex items-center justify-center gap-2">
+                  <ShoppingBag className="w-4 h-4" /> View Cart ({itemCount})
                 </button>
-                <p className="text-center text-xs text-gray-400 mt-2">Minimum order £20 · Free delivery over £50</p>
               </div>
             </motion.div>
           </>

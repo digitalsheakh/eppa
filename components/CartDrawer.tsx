@@ -66,7 +66,7 @@ export default function CartDrawer() {
                   <p className="font-semibold text-gray-900">Your cart is empty</p>
                   <p className="text-sm text-gray-400">Add some products to get started.</p>
                   <button onClick={closeCart}
-                    className="btn-primary mt-2">
+                    className="mt-2 bg-black hover:bg-gray-900 text-white text-sm font-semibold px-5 py-2.5 rounded-lg transition-colors">
                     Continue Shopping
                   </button>
                 </div>
@@ -145,7 +145,7 @@ export default function CartDrawer() {
                 <button
                   onClick={handleCheckout}
                   disabled={belowMinimum}
-                  className={`w-full font-bold py-3.5 rounded-full flex items-center justify-center gap-2 transition-colors text-sm shadow-sm ${belowMinimum ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-accent-500 hover:bg-accent-600 text-white'}`}>
+                  className={`w-full font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm ${belowMinimum ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-black hover:bg-gray-900 text-white'}`}>
                   Checkout <ArrowRight className="w-4 h-4" />
                 </button>
                 <button onClick={closeCart}
