@@ -1,18 +1,16 @@
-import Image from 'next/image';
-
-export default function Logo({ className = '', width = 180, height = 50 }: {
+export default function Logo({ className = '', width = 180 }: {
   className?: string;
   width?: number;
   height?: number;
 }) {
   return (
-    <Image
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
       src="/eppa_logo.png"
       alt="Eppa's Shop"
       width={width}
-      height={height}
-      className={`h-auto object-contain ${className}`}
-      priority
+      className={`object-contain ${className}`}
+      style={{ height: 'auto' }}
     />
   );
 }
