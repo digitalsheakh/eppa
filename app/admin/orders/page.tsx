@@ -1,7 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { Order } from '@/lib/db';
-import { Loader2, Menu, X, Eye, TrendingUp, Clock, CheckCircle, DollarSign, Users } from 'lucide-react';
+import { Loader2, Menu, X, Eye, TrendingUp, Clock, CheckCircle, DollarSign, Users, ShoppingBag } from 'lucide-react';
 import Link from 'next/link';
 import AdminSidebar from '@/components/AdminSidebar';
 
@@ -80,7 +80,7 @@ export default function AdminOrdersPage() {
             <Menu className="w-5 h-5 text-gray-600" />
           </button>
           <h1 className="font-bold text-gray-900">Orders</h1>
-          <button onClick={load} className="ml-auto text-xs text-accent-600 hover:text-accent-700 font-medium">
+          <button onClick={load} className="ml-auto text-xs text-gray-500 hover:text-black font-medium">
             Refresh
           </button>
         </header>
@@ -91,8 +91,8 @@ export default function AdminOrdersPage() {
             {[
               { label: 'Total Orders', value: stats.total, icon: TrendingUp, color: 'text-gray-900', bg: 'bg-gray-100' },
               { label: 'Pending', value: stats.pending, icon: Clock, color: 'text-yellow-700', bg: 'bg-yellow-100' },
-              { label: 'Delivered', value: stats.delivered, icon: CheckCircle, color: 'text-accent-700', bg: 'bg-accent-100' },
-              { label: 'Revenue', value: `£${stats.revenue.toFixed(2)}`, icon: DollarSign, color: 'text-accent-700', bg: 'bg-accent-100' },
+              { label: 'Delivered', value: stats.delivered, icon: CheckCircle, color: 'text-green-700', bg: 'bg-green-100' },
+              { label: 'Revenue', value: `£${stats.revenue.toFixed(2)}`, icon: DollarSign, color: 'text-gray-900', bg: 'bg-gray-100' },
             ].map(s => (
               <div key={s.label} className="bg-white border border-gray-200 p-4 rounded-sm">
                 <div className="flex items-center gap-2 mb-2">
@@ -108,7 +108,7 @@ export default function AdminOrdersPage() {
 
           {loading ? (
             <div className="flex items-center justify-center py-24">
-              <Loader2 className="w-6 h-6 animate-spin text-accent-500" />
+              <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
             </div>
           ) : (
             <>
@@ -143,7 +143,7 @@ export default function AdminOrdersPage() {
                           </select>
                         </td>
                         <td className="px-4 py-3">
-                          <button onClick={() => viewOrder(order)} className="p-2 hover:bg-accent-50 text-accent-600 rounded transition-colors">
+                          <button onClick={() => viewOrder(order)} className="p-2 hover:bg-gray-100 text-gray-600 rounded transition-colors">
                             <Eye className="w-4 h-4" />
                           </button>
                         </td>
@@ -186,7 +186,7 @@ export default function AdminOrdersPage() {
                       </select>
                       <div className="flex items-center gap-2">
                         <span className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleDateString('en-GB')}</span>
-                        <button onClick={() => viewOrder(order)} className="p-1.5 hover:bg-accent-50 text-accent-600 rounded">
+                        <button onClick={() => viewOrder(order)} className="p-1.5 hover:bg-gray-100 text-gray-600 rounded">
                           <Eye className="w-4 h-4" />
                         </button>
                       </div>
@@ -235,7 +235,7 @@ export default function AdminOrdersPage() {
                 </div>
                 <div className="mt-4 pt-3 border-t border-gray-200 flex justify-between font-bold text-base">
                   <span className="text-gray-700">Total</span>
-                  <span className="text-accent-600">£{selected.total.toFixed(2)}</span>
+                  <span className="text-gray-900">£{selected.total.toFixed(2)}</span>
                 </div>
               </div>
 

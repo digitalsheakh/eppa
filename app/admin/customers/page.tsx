@@ -1,6 +1,6 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Loader2, Menu, X, Search, ChevronDown, ChevronUp, Mail, Phone } from 'lucide-react';
+import { Loader2, Menu, X, Search, ChevronDown, ChevronUp, Mail, Phone, ShoppingBag, Package, Users } from 'lucide-react';
 import Link from 'next/link';
 import AdminSidebar from '@/components/AdminSidebar';
 
@@ -27,7 +27,7 @@ interface Customer {
 
 const STATUS_STYLES: Record<string, string> = {
   pending:         'bg-yellow-100 text-yellow-700',
-  pending_payment: 'bg-orange-100 text-orange-700',
+  pending_payment: 'bg-yellow-100 text-yellow-700',
   confirmed:       'bg-blue-100 text-blue-700',
   processing:      'bg-purple-100 text-purple-700',
   dispatched:      'bg-indigo-100 text-indigo-700',
@@ -46,7 +46,7 @@ function CustomerRow({ customer }: { customer: Customer }) {
         className="w-full flex items-center gap-4 px-5 py-4 text-left hover:bg-gray-50 transition-colors"
       >
         {/* Avatar */}
-        <div className="w-10 h-10 rounded-full bg-accent-100 text-accent-600 flex items-center justify-center font-bold text-sm shrink-0">
+        <div className="w-10 h-10 rounded-full bg-gray-100 text-gray-700 flex items-center justify-center font-bold text-sm shrink-0">
           {initial}
         </div>
 
@@ -86,7 +86,7 @@ function CustomerRow({ customer }: { customer: Customer }) {
           {/* Contact details */}
           <div className="flex flex-wrap gap-4 text-sm">
             <a href={`mailto:${customer.email}`}
-              className="flex items-center gap-1.5 text-accent-600 hover:text-accent-700 font-medium">
+              className="flex items-center gap-1.5 text-gray-600 hover:text-black font-medium">
               <Mail className="w-3.5 h-3.5" /> {customer.email}
             </a>
             {customer.phone && (
@@ -227,7 +227,7 @@ export default function AdminCustomersPage() {
           ].map(({ label, value, icon: Icon }) => (
             <div key={label} className="bg-white border border-gray-100 rounded-xl p-4 shadow-sm">
               <div className="flex items-center gap-2 mb-1">
-                <Icon className="w-4 h-4 text-accent-500" />
+                <Icon className="w-4 h-4 text-gray-500" />
                 <p className="text-xs text-gray-500 font-medium">{label}</p>
               </div>
               <p className="text-xl font-bold text-gray-900">{value}</p>

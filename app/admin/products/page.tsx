@@ -376,7 +376,7 @@ export default function AdminProductsPage() {
                   <label className="block text-xs font-semibold text-gray-700 mb-1.5">
                     Category
                     <button type="button" onClick={() => setShowCatModal(true)}
-                      className="ml-2 text-accent-500 hover:underline font-normal">manage</button>
+                      className="ml-2 text-gray-500 hover:text-black hover:underline font-normal">manage</button>
                   </label>
                   <select className="input" value={form.category} onChange={e => setForm(f => ({...f, category: e.target.value}))}>
                     {categories.map(c => <option key={c} value={c}>{c}</option>)}
