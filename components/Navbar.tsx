@@ -49,7 +49,7 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center gap-6">
             <Link href="/" className="text-sm text-gray-700 hover:text-black transition-colors">Home</Link>
             <Link href="/shop" className="text-sm text-gray-700 hover:text-black transition-colors">Shop</Link>
-            <Link href="/shop" className="text-sm text-gray-700 hover:text-black transition-colors">Contact</Link>
+            <Link href="/contact" className="text-sm text-gray-700 hover:text-black transition-colors">Contact</Link>
           </nav>
 
           {/* Right icons */}
@@ -109,19 +109,6 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile search bar (always visible below nav on mobile) */}
-        <div className="md:hidden border-t border-gray-100 px-4 py-2">
-          <form onSubmit={handleSearch} className="flex items-center border border-gray-200 rounded-full overflow-hidden bg-gray-50">
-            <Search className="w-4 h-4 text-gray-400 ml-3 shrink-0" />
-            <input
-              type="text"
-              value={searchVal}
-              onChange={e => setSearchVal(e.target.value)}
-              placeholder="Search fragrances..."
-              className="flex-1 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 bg-transparent focus:outline-none"
-            />
-          </form>
-        </div>
       </header>
 
       {/* Mobile drawer */}
@@ -145,7 +132,7 @@ export default function Navbar() {
                 </button>
               </div>
               <nav className="flex-1 px-4 py-4 space-y-1">
-                {[['Home', '/'], ['Shop', '/shop'], ['Contact', '/shop'], ['Track Order', '/track-order'], ['My Account', '/account']].map(([label, href]) => (
+                {[['Home', '/'], ['Shop', '/shop'], ['Contact', '/contact'], ['My Account', '/account']].map(([label, href]) => (
                   <Link key={label} href={href} onClick={() => setOpen(false)}
                     className="flex items-center justify-between px-3 py-3 rounded-lg text-sm text-gray-700 hover:bg-gray-50 hover:text-black transition-colors">
                     {label}

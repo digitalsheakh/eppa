@@ -68,8 +68,8 @@ export default function Footer() {
           &copy; {new Date().getFullYear()} Eppa&apos;s Shop. All rights reserved.
         </p>
         <div className="flex items-center gap-4 text-xs text-gray-400">
-          <Link href="/shop" className="hover:text-black transition-colors">Privacy Policy</Link>
-          <Link href="/shop" className="hover:text-black transition-colors">Cookie Preferences</Link>
+          <Link href="/refund-policy" className="hover:text-black transition-colors">Refund Policy</Link>
+          <Link href="/delivery-policy" className="hover:text-black transition-colors">Delivery Policy</Link>
         </div>
       </div>
     </footer>
