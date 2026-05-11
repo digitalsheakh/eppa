@@ -2,6 +2,8 @@
 import { motion } from 'framer-motion';
 import { ReactNode } from 'react';
 
+const EASE: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
+
 interface Props {
   children: ReactNode;
   className?: string;
@@ -36,7 +38,7 @@ export default function ScrollReveal({
       transition={{
         duration,
         delay,
-        ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
+        ease: EASE,
       }}
     >
       {children}
@@ -83,7 +85,7 @@ export function StaggerItem({
         visible: {
           opacity: 1,
           y: 0,
-          transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] },
+          transition: { duration: 0.45, ease: EASE },
         },
       }}
     >

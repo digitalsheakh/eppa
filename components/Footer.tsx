@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { motion } from 'framer-motion';
 import Logo from './Logo';
 
+const EASE: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
+
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
@@ -31,7 +33,7 @@ export default function Footer() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
-          transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
+          transition={{ duration: 0.55, ease: EASE }}
         >
           <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">Newsletter</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2 tracking-tight">

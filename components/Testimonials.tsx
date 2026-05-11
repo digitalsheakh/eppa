@@ -49,6 +49,8 @@ function ReviewCard({ title, text, name, time }: typeof REVIEWS[0]) {
   );
 }
 
+const EASE: [number, number, number, number] = [0.25, 0.1, 0.25, 1];
+
 const containerVariants = {
   hidden: {},
   visible: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
@@ -56,7 +58,7 @@ const containerVariants = {
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] } },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: EASE } },
 };
 
 export default function Testimonials() {
