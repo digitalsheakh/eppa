@@ -1,172 +1,106 @@
-# 🍽️ CaterPro Supply — Next.js Catering E-Commerce
+# Eppa's Shop
 
-A full-stack catering supplies e-commerce website using **Next.js 14** with **Google Sheets as the backend database**.
+A full-stack fragrance e-commerce platform built with **Next.js 14**, **Firebase**, and **Stripe**.
 
 ---
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
-catering-shop/
+eppas-shop/
 ├── app/
-│   ├── page.tsx              # Homepage
-│   ├── shop/page.tsx         # Product catalogue
-│   ├── cart/page.tsx         # Shopping cart
-│   ├── checkout/page.tsx     # Checkout form
-│   ├── admin/
-│   │   ├── page.tsx          # Admin login
-│   │   ├── products/page.tsx # Manage products (CRUD)
-│   │   └── orders/page.tsx   # Manage & update orders
-│   └── api/
-│       ├── products/route.ts         # GET all / POST new
-│       ├── products/[id]/route.ts    # PATCH / DELETE
-│       ├── orders/route.ts           # GET all / POST new
-│       ├── orders/[id]/route.ts      # PATCH status / GET items
-│       └── admin/route.ts            # Auth
+│   ├── page.tsx                  # Homepage
+│   ├── shop/page.tsx             # Product catalogue
+│   ├── shop/[slug]/page.tsx      # Product detail page
+│   ├── cart/page.tsx             # Shopping cart
+│   ├── checkout/page.tsx         # Checkout
+│   ├── account/page.tsx          # Customer account & orders
+│   ├── track-order/page.tsx      # Order tracking
+│   ├── contact/page.tsx          # Contact form
+│   ├── refund-policy/page.tsx    # Refund policy
+│   ├── delivery-policy/page.tsx  # Delivery policy
+│   └── admin/
+│       ├── page.tsx              # Admin login
+│       ├── products/page.tsx     # Manage products (CRUD)
+│       ├── orders/page.tsx       # Manage & update orders
+│       ├── customers/page.tsx    # View customers
+│       └── settings/page.tsx     # Admin settings
 ├── components/
 │   ├── Navbar.tsx
+│   ├── Footer.tsx
 │   ├── ProductCard.tsx
-│   └── Footer.tsx
+│   ├── CartDrawer.tsx
+│   ├── HeroSlider.tsx
+│   ├── Testimonials.tsx
+│   ├── AdminSidebar.tsx
+│   └── ScrollReveal.tsx
 └── lib/
-    ├── googleSheets.ts   # All Google Sheets API logic
-    └── cartStore.ts      # Zustand cart (persisted)
+    ├── firebase.ts     # Firebase client config
+    ├── db.ts           # Firestore data layer
+    └── cartStore.ts    # Zustand cart (persisted)
 ```
 
 ---
 
-## ⚡ Quick Start
+## Quick Start
 
 ### 1. Install dependencies
 ```bash
 npm install
 ```
 
-### 2. Set up Google Sheets (see full guide below)
+### 2. Create `.env.local`
+```env
+# Firebase (client)
+NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
+NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
+NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_project.firebasestorage.app
+NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 
-### 3. Create `.env.local`
-```bash
-cp .env.local.example .env.local
-# Fill in your credentials
+# Firebase Admin (server)
+FIREBASE_CLIENT_EMAIL=your_service_account@project.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\n...\n-----END RSA PRIVATE KEY-----"
+
+# Admin panel password
+ADMIN_PASSWORD=your_secure_password
+
+# Stripe
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_live_...
+STRIPE_SECRET_KEY=sk_live_...
+
+# Resend (email)
+RESEND_API_KEY=re_...
+EMAIL_FROM=noreply@eppa.shop
 ```
 
-### 4. Run development server
+### 3. Run development server
 ```bash
 npm run dev
 ```
 
-Open http://localhost:3000
+Open [http://localhost:3000](http://localhost:3000)
 
 ---
 
-## 📊 Google Sheets Setup (Step-by-Step)
+## Admin Dashboard
 
-### Step 1: Create your Google Spreadsheet
+Access the admin panel at `/admin`. Log in with the password set in `ADMIN_PASSWORD`.
 
-1. Go to [sheets.google.com](https://sheets.google.com) and create a new spreadsheet
-2. Name it **"CaterPro Supply"**
-3. Create **3 sheets** (tabs at the bottom):
-   - `Products`
-   - `Orders`
-   - `OrderItems`
-
-### Step 2: Set up sheet headers
-
-**Products sheet** — Row 1 headers:
-| A | B | C | D | E | F | G | H | I |
-|---|---|---|---|---|---|---|---|---|
-| id | name | category | price | unit | description | image | stock | active |
-
-**Orders sheet** — Row 1 headers:
-| A | B | C | D | E | F | G | H | I |
-|---|---|---|---|---|---|---|---|---|
-| id | customerName | email | phone | address | total | status | createdAt | notes |
-
-**OrderItems sheet** — Row 1 headers:
-| A | B | C | D | E |
-|---|---|---|---|---|
-| orderId | productId | productName | quantity | price |
-
-### Step 3: Add sample products (optional)
-
-Add a row in the Products sheet:
-```
-P001 | Kraft Takeaway Boxes (50pk) | Packaging | 12.99 | pack | Premium kraft paper boxes | | 200 | TRUE
-P002 | Plastic Cutlery Set (100pk) | Disposables | 8.50 | pack | Individually wrapped cutlery | | 500 | TRUE
-P003 | Chef's Frying Pan 28cm | Equipment | 45.00 | each | Heavy duty non-stick | | 30 | TRUE
-```
-
-### Step 4: Create a Google Cloud Service Account
-
-1. Go to [console.cloud.google.com](https://console.cloud.google.com)
-2. Create a new project (or use existing)
-3. Enable **Google Sheets API**:
-   - Search "Google Sheets API" → Enable
-4. Go to **IAM & Admin** → **Service Accounts**
-5. Click **Create Service Account**
-   - Name: `caterpro-sheets`
-   - Click Create and Continue → Done
-6. Click on the service account → **Keys** tab → **Add Key** → **JSON**
-7. Download the JSON file — keep it safe!
-
-### Step 5: Share your spreadsheet with the service account
-
-1. Open your JSON file and copy the `client_email` value
-   (looks like: `caterpro-sheets@your-project.iam.gserviceaccount.com`)
-2. Open your Google Spreadsheet
-3. Click **Share** → paste the email → give **Editor** access → Share
-
-### Step 6: Fill in `.env.local`
-
-```env
-GOOGLE_SERVICE_ACCOUNT_EMAIL=caterpro-sheets@your-project.iam.gserviceaccount.com
-GOOGLE_PRIVATE_KEY="-----BEGIN RSA PRIVATE KEY-----\nABC123...\n-----END RSA PRIVATE KEY-----"
-GOOGLE_SPREADSHEET_ID=1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgVE2upms
-ADMIN_PASSWORD=your-secure-password
-NEXT_PUBLIC_BASE_URL=http://localhost:3000
-```
-
-**Finding your Spreadsheet ID:**
-```
-https://docs.google.com/spreadsheets/d/THIS_IS_THE_ID/edit
-```
-
-**Copying the private key:**
-From the downloaded JSON file, copy the `private_key` field (including the `-----BEGIN...-----END-----` parts).
-Replace actual newlines with `\n` in the .env file.
+Features:
+- **Products** — add, edit, toggle active/inactive, upload images
+- **Orders** — view all orders, update status, add courier tracking
+- **Customers** — view registered customers
+- **Settings** — site configuration
 
 ---
 
-## 🛠️ Features
+## Deploy to Vercel
 
-### Customer-facing
-- 🏠 **Homepage** with hero, categories & CTA
-- 🛒 **Product catalogue** with search, filter by category, sort
-- 🛍️ **Shopping cart** with persistent storage (survives page refresh)
-- ✅ **Checkout** — collects delivery details, saves order to Google Sheets
-
-### Admin Dashboard (`/admin`)
-- 🔐 **Password-protected login**
-- 📦 **Products CRUD** — add, edit, deactivate products
-- 📋 **Orders management** — view all orders, update status, see order items
-- 📊 **Stats** — total orders, pending, delivered, revenue
-
----
-
-## 🚀 Deploy to Vercel
-
-1. Push code to GitHub
+1. Push to GitHub
 2. Import to [vercel.com](https://vercel.com)
 3. Add all environment variables from `.env.local`
-4. Deploy!
+4. Deploy
 
-> ⚠️ For `GOOGLE_PRIVATE_KEY` in Vercel, paste the raw key with real newlines, not `\n`
-
----
-
-## 💡 Tips
-
-- Products marked `active: FALSE` in the sheet won't appear in the store
-- "Deleting" a product just sets it to inactive (data is preserved)
-- Orders are sorted newest-first in the admin panel
-- Free delivery threshold is £75 (edit in `cart/page.tsx` and `checkout/page.tsx`)
-- Admin session lasts 8 hours (cookie-based)
+> For `FIREBASE_PRIVATE_KEY` on Vercel, paste the raw key with real newlines (not `\n`).
