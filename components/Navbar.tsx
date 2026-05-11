@@ -42,7 +42,7 @@ export default function Navbar() {
 
           {/* Logo — left */}
           <Link href="/" className="shrink-0" aria-label="Eppa's Shop">
-            <Logo width={90} height={28} />
+            <Logo width={62} height={20} />
           </Link>
 
           {/* Desktop nav — centre */}
@@ -139,7 +139,7 @@ export default function Navbar() {
               className="fixed top-0 left-0 h-full w-72 bg-white z-50 flex flex-col shadow-2xl"
             >
               <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <Logo width={80} height={24} />
+                <Logo width={55} height={18} />
                 <button onClick={() => setOpen(false)} className="p-2 text-gray-400 hover:text-gray-700">
                   <X className="w-5 h-5" />
                 </button>

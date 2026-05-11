@@ -1,7 +1,8 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Loader2, Users, ShoppingBag, Package, Home, Menu, X, Settings, Search, ChevronDown, ChevronUp, Mail, Phone } from 'lucide-react';
+import { Loader2, Menu, X, Search, ChevronDown, ChevronUp, Mail, Phone } from 'lucide-react';
 import Link from 'next/link';
+import AdminSidebar from '@/components/AdminSidebar';
 
 interface Order {
   id: string;
@@ -33,44 +34,6 @@ const STATUS_STYLES: Record<string, string> = {
   delivered:       'bg-green-100 text-green-700',
   cancelled:       'bg-red-100 text-red-700',
 };
-
-function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const links = [
-    { href: '/admin/products',  icon: Package,  label: 'Products' },
-    { href: '/admin/orders',    icon: ShoppingBag, label: 'Orders' },
-    { href: '/admin/customers', icon: Users,    label: 'Customers' },
-    { href: '/admin/settings',  icon: Settings, label: 'Settings' },
-    { href: '/',                icon: Home,     label: 'View Store' },
-  ];
-  return (
-    <>
-      {open && <div className="fixed inset-0 bg-black/50 z-30 md:hidden" onClick={onClose} />}
-      <aside className={`fixed top-0 left-0 h-full w-60 bg-gray-900 text-white z-40 flex flex-col transition-transform duration-300
-        ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
-        <div className="p-5 border-b border-gray-800 flex items-center justify-between">
-          <span className="font-bold text-base">
-            Eppas<span className="text-accent-400"> Shop</span>
-          </span>
-          <button onClick={onClose} className="md:hidden text-gray-400 hover:text-white">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-5 pt-5 pb-2">Menu</p>
-        <nav className="flex flex-col gap-1 px-3 flex-1">
-          {links.map(({ href, icon: Icon, label }) => (
-            <Link key={href} href={href} onClick={onClose}
-              className="admin-link text-gray-300 hover:text-white hover:bg-white/10">
-              <Icon className="w-4 h-4" /> {label}
-            </Link>
-          ))}
-        </nav>
-        <div className="p-5 border-t border-gray-800">
-          <p className="text-xs text-gray-600">Admin Dashboard</p>
-        </div>
-      </aside>
-    </>
-  );
-}
 
 function CustomerRow({ customer }: { customer: Customer }) {
   const [expanded, setExpanded] = useState(false);

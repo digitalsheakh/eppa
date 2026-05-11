@@ -1,51 +1,14 @@
 'use client';
 import { useEffect, useState, useRef, useCallback } from 'react';
 import { Product } from '@/lib/db';
-import { Plus, Pencil, Trash2, Loader2, Package, ShoppingBag, Menu, X, Home, Bold, Italic, List, Link2, Eye, Settings, Tag, Users } from 'lucide-react';
+import { Plus, Pencil, Trash2, Loader2, Package, Menu, X, Bold, Italic, List, Link2, Eye, Tag } from 'lucide-react';
 import Link from 'next/link';
+import AdminSidebar from '@/components/AdminSidebar';
 
 const EMPTY: Omit<Product, 'id'> = {
   name: '', category: '', price: 0, unit: 'each',
   description: '', image: '', stock: 100, active: true,
 };
-
-function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => void }) {
-  const links = [
-    { href: '/admin/products',   icon: Package,    label: 'Products' },
-    { href: '/admin/orders',     icon: ShoppingBag, label: 'Orders' },
-    { href: '/admin/customers',  icon: Users,       label: 'Customers' },
-    { href: '/admin/settings',   icon: Settings,    label: 'Settings' },
-    { href: '/',                 icon: Home,        label: 'View Store' },
-  ];
-  return (
-    <>
-      {open && <div className="fixed inset-0 bg-black/50 z-30 md:hidden" onClick={onClose} />}
-      <aside className={`fixed top-0 left-0 h-full w-60 bg-gray-900 text-white z-40 flex flex-col transition-transform duration-300
-        ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
-        <div className="p-5 border-b border-gray-800 flex items-center justify-between">
-          <span className="font-bold text-base tracking-tight">
-            Eppas<span className="text-accent-400"> Shop</span>
-          </span>
-          <button onClick={onClose} className="md:hidden text-gray-400 hover:text-white">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest px-5 pt-5 pb-2">Menu</p>
-        <nav className="flex flex-col gap-1 px-3 flex-1">
-          {links.map(({ href, icon: Icon, label }) => (
-            <Link key={href} href={href} onClick={onClose}
-              className="admin-link text-gray-300 hover:text-white hover:bg-white/10">
-              <Icon className="w-4 h-4" /> {label}
-            </Link>
-          ))}
-        </nav>
-        <div className="p-5 border-t border-gray-800">
-          <p className="text-xs text-gray-600">Admin Dashboard</p>
-        </div>
-      </aside>
-    </>
-  );
-}
 
 function RichTextEditor({ value, onChange }: { value: string; onChange: (html: string) => void }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -95,7 +58,7 @@ function RichTextEditor({ value, onChange }: { value: string; onChange: (html: s
         </button>
         <div className="w-px h-4 bg-gray-300 mx-1" />
         <button type="button" onClick={() => setPreview(p => !p)}
-          className={`p-1.5 rounded transition-colors flex items-center gap-1 text-xs font-medium ${preview ? 'bg-primary-100 text-primary-700' : 'hover:bg-gray-200 text-gray-600'}`}>
+          className={`p-1.5 rounded transition-colors flex items-center gap-1 text-xs font-medium ${preview ? 'bg-gray-100 text-gray-700' : 'hover:bg-gray-200 text-gray-600'}`}>
           <Eye className="w-3.5 h-3.5" /> {preview ? 'Edit' : 'Preview'}
         </button>
       </div>
@@ -141,7 +104,7 @@ function CategoryModal({ categories, onSave, onClose }: {
       <div className="bg-white rounded-t-xl sm:rounded-sm shadow-2xl w-full sm:max-w-md">
         <div className="sticky top-0 bg-white border-b border-gray-100 px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Tag className="w-4 h-4 text-primary-600" />
+            <Tag className="w-4 h-4 text-black" />
             <h2 className="text-sm font-bold text-gray-900">Manage Categories</h2>
           </div>
           <button onClick={onClose} className="text-gray-400 hover:text-gray-600 p-1">
@@ -158,7 +121,7 @@ function CategoryModal({ categories, onSave, onClose }: {
               onChange={e => setNewCat(e.target.value)}
               onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); add(); } }}
             />
-            <button type="button" onClick={add} className="btn-primary py-2 px-4 text-xs shrink-0">
+            <button type="button" onClick={add} className="bg-black hover:bg-gray-900 text-white rounded-lg flex items-center gap-1.5 transition-colors py-2 px-4 text-xs shrink-0">
               <Plus className="w-3.5 h-3.5" /> Add
             </button>
           </div>
@@ -179,10 +142,10 @@ function CategoryModal({ categories, onSave, onClose }: {
           </div>
 
           <div className="flex gap-3 pt-2">
-            <button type="button" onClick={onClose} className="btn-outline flex-1 justify-center py-2.5 text-sm">
+            <button type="button" onClick={onClose} className="border border-gray-300 hover:border-black text-gray-700 hover:text-black rounded-lg flex items-center gap-1.5 transition-colors flex-1 justify-center py-2.5 text-sm">
               Cancel
             </button>
-            <button type="button" onClick={handleSave} disabled={saving} className="btn-primary flex-1 justify-center py-2.5 text-sm">
+            <button type="button" onClick={handleSave} disabled={saving} className="bg-black hover:bg-gray-900 text-white rounded-lg flex items-center gap-1.5 transition-colors flex-1 justify-center py-2.5 text-sm">
               {saving ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : 'Save Categories'}
             </button>
           </div>
@@ -263,7 +226,7 @@ export default function AdminProductsPage() {
     <div className="min-h-screen bg-gray-50 flex">
       <AdminSidebar open={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-      <div className="flex-1 md:ml-60 flex flex-col min-h-screen">
+      <div className="flex-1 md:ml-56 flex flex-col min-h-screen">
         {/* Top bar */}
         <header className="bg-white border-b border-gray-200 h-14 flex items-center px-4 sm:px-6 gap-3 sticky top-0 z-20">
           <button onClick={() => setSidebarOpen(true)} className="md:hidden p-1.5 hover:bg-gray-100 rounded">
@@ -272,10 +235,10 @@ export default function AdminProductsPage() {
           <h1 className="font-bold text-gray-900">Products</h1>
           <div className="ml-auto flex items-center gap-2">
             <button onClick={() => setShowCatModal(true)}
-              className="btn-outline py-2 px-3 text-xs flex items-center gap-1.5">
+              className="border border-gray-300 hover:border-black text-gray-700 hover:text-black py-2 px-3 text-xs rounded-lg flex items-center gap-1.5 transition-colors">
               <Tag className="w-3.5 h-3.5" /> Categories
             </button>
-            <button onClick={openNew} className="btn-primary py-2 px-4 text-xs">
+            <button onClick={openNew} className="bg-black hover:bg-gray-900 text-white py-2 px-4 text-xs rounded-lg flex items-center gap-1.5 transition-colors">
               <Plus className="w-3.5 h-3.5" /> Add Product
             </button>
           </div>
@@ -283,7 +246,7 @@ export default function AdminProductsPage() {
 
         <main className="flex-1 p-4 sm:p-6">
           {msg && (
-            <div className="mb-4 bg-primary-50 border border-primary-200 text-primary-700 rounded-sm px-4 py-3 text-sm font-medium">
+            <div className="mb-4 bg-gray-900 text-white rounded-lg px-4 py-3 text-sm font-medium">
               {msg}
             </div>
           )}
@@ -294,12 +257,12 @@ export default function AdminProductsPage() {
 
           {loading ? (
             <div className="flex items-center justify-center py-24">
-              <Loader2 className="w-6 h-6 animate-spin text-primary-500" />
+              <Loader2 className="w-6 h-6 animate-spin text-gray-500" />
             </div>
           ) : (
             <>
               {/* Desktop table */}
-              <div className="hidden sm:block bg-white border border-gray-200 overflow-hidden">
+              <div className="hidden sm:block bg-white border border-gray-200 rounded-xl overflow-hidden">
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
@@ -329,16 +292,16 @@ export default function AdminProductsPage() {
                         <td className="px-4 py-3 font-bold text-gray-900">£{p.price.toFixed(2)}</td>
                         <td className="px-4 py-3 text-gray-600">{p.stock}</td>
                         <td className="px-4 py-3">
-                          <span className={`badge ${p.active ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-500'}`}>
+                          <span className={`inline-flex items-center px-2 py-0.5 text-xs font-semibold rounded-full ${p.active ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}`}>
                             {p.active ? 'Active' : 'Inactive'}
                           </span>
                         </td>
                         <td className="px-4 py-3">
                           <div className="flex gap-1">
-                            <button onClick={() => openEdit(p)} className="p-2 hover:bg-primary-50 text-primary-600 transition-colors rounded">
+                            <button onClick={() => openEdit(p)} className="p-2 hover:bg-gray-100 text-gray-600 hover:text-black transition-colors rounded-lg">
                               <Pencil className="w-4 h-4" />
                             </button>
-                            <button onClick={() => handleDelete(p.id)} className="p-2 hover:bg-red-50 text-red-400 transition-colors rounded">
+                            <button onClick={() => handleDelete(p.id)} className="p-2 hover:bg-red-50 text-red-400 transition-colors rounded-lg">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
@@ -373,17 +336,17 @@ export default function AdminProductsPage() {
                     <div className="flex-1 min-w-0">
                       <p className="font-medium text-gray-900 text-sm truncate">{p.name}</p>
                       <p className="text-xs text-gray-400">{p.category}</p>
-                      <p className="text-primary-600 font-bold text-sm">£{p.price.toFixed(2)}</p>
+                      <p className="text-black font-bold text-sm">£{p.price.toFixed(2)}</p>
                       <div className="flex items-center gap-2 mt-1">
-                        <span className={`badge text-[10px] ${p.active ? 'bg-primary-100 text-primary-700' : 'bg-gray-100 text-gray-500'}`}>
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${p.active ? 'bg-black text-white' : 'bg-gray-100 text-gray-500'}`}>
                           {p.active ? 'Active' : 'Inactive'}
                         </span>
                         <span className="text-xs text-gray-400">Stock: {p.stock}</span>
                       </div>
                     </div>
                     <div className="flex flex-col gap-1 shrink-0">
-                      <button onClick={() => openEdit(p)} className="p-2 hover:bg-primary-50 text-primary-600 rounded"><Pencil className="w-4 h-4" /></button>
-                      <button onClick={() => handleDelete(p.id)} className="p-2 hover:bg-red-50 text-red-400 rounded"><Trash2 className="w-4 h-4" /></button>
+                      <button onClick={() => openEdit(p)} className="p-2 hover:bg-gray-100 text-gray-600 hover:text-black rounded-lg"><Pencil className="w-4 h-4" /></button>
+                      <button onClick={() => handleDelete(p.id)} className="p-2 hover:bg-red-50 text-red-400 rounded-lg"><Trash2 className="w-4 h-4" /></button>
                     </div>
                   </div>
                 ))}
@@ -455,15 +418,15 @@ export default function AdminProductsPage() {
               </div>
 
               <div className="flex items-center gap-3">
-                <input type="checkbox" id="active" checked={form.active} onChange={e => setForm(f => ({...f, active: e.target.checked}))} className="w-4 h-4 accent-primary-600" />
+                <input type="checkbox" id="active" checked={form.active} onChange={e => setForm(f => ({...f, active: e.target.checked}))} className="w-4 h-4 accent-black" />
                 <label htmlFor="active" className="text-sm text-gray-700">Active (visible in store)</label>
               </div>
 
               <div className="flex gap-3 pt-2">
-                <button type="button" onClick={() => setShowForm(false)} className="btn-outline flex-1 justify-center py-2.5 text-sm">
+                <button type="button" onClick={() => setShowForm(false)} className="border border-gray-300 hover:border-black text-gray-700 hover:text-black rounded-lg flex items-center gap-1.5 transition-colors flex-1 justify-center py-2.5 text-sm">
                   Cancel
                 </button>
-                <button type="submit" disabled={saving} className="btn-primary flex-1 justify-center py-2.5 text-sm">
+                <button type="submit" disabled={saving} className="bg-black hover:bg-gray-900 text-white rounded-lg flex items-center gap-1.5 transition-colors flex-1 justify-center py-2.5 text-sm">
                   {saving ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : (editing ? 'Update Product' : 'Add Product')}
                 </button>
               </div>
