@@ -105,7 +105,7 @@ function ShopContent() {
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
           {loading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
               {[...Array(10)].map((_, i) => <SkeletonCard key={i} />)}
             </div>
           ) : filtered.length === 0 ? (
@@ -124,7 +124,7 @@ function ShopContent() {
             <motion.div
               initial="hidden" animate="visible"
               variants={{ hidden: {}, visible: { transition: { staggerChildren: 0.04 } } }}
-              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4"
+              className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
             >
               <AnimatePresence>
                 {filtered.map(p => (
@@ -151,7 +151,7 @@ export default function ShopPage() {
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50">
         <div className="bg-white border-b border-gray-200 h-20" />
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
           {[...Array(10)].map((_, i) => (
             <div key={i} className="bg-white border border-gray-100 rounded-xl overflow-hidden">
               <div className="aspect-square skeleton" />

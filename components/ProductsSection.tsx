@@ -78,7 +78,7 @@ export default function ProductsSection() {
           </motion.div>
         ) : (
           <motion.div
-            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
+            className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4"
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"

@@ -1,14 +1,15 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Package, ShoppingBag, Users, Settings, Home, X, ExternalLink } from 'lucide-react';
+import { Package, ShoppingBag, Users, Settings, Home, X, ExternalLink, Mail } from 'lucide-react';
 import Logo from './Logo';
 
 const LINKS = [
   { href: '/admin/products',  icon: Package,    label: 'Products' },
   { href: '/admin/orders',    icon: ShoppingBag, label: 'Orders' },
   { href: '/admin/customers', icon: Users,       label: 'Customers' },
-  { href: '/admin/settings',  icon: Settings,    label: 'Settings' },
+  { href: '/admin/subscribers', icon: Mail,        label: 'Subscribers' },
+  { href: '/admin/settings',    icon: Settings,    label: 'Settings' },
 ];
 
 export default function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => void }) {

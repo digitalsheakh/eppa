@@ -253,3 +253,34 @@ export async function getOrderItems(orderId: string): Promise<OrderItem[]> {
   const items = doc.data()?.items ?? [];
   return items.map((item: any) => ({ ...item, orderId }));
 }
+
+// ─── SUBSCRIBERS ──────────────────────────────────────────────────────────────
+
+export interface Subscriber {
+  email: string;
+  subscribedAt: string;
+}
+
+export async function addSubscriber(email: string): Promise<void> {
+  const db = getAdminDb();
+  if (!db) throw new Error('Firestore not configured');
+  await db.collection('subscribers').doc(email.toLowerCase()).set({
+    email: email.toLowerCase(),
+    subscribedAt: Timestamp.now(),
+  }, { merge: true });
+}
+
+export async function getSubscribers(): Promise<Subscriber[]> {
+  const db = getAdminDb();
+  if (!db) return [];
+  const snap = await db.collection('subscribers').orderBy('subscribedAt', 'desc').get();
+  return snap.docs.map(doc => {
+    const d = doc.data();
+    return {
+      email: d.email ?? doc.id,
+      subscribedAt: d.subscribedAt instanceof Timestamp
+        ? d.subscribedAt.toDate().toISOString()
+        : (d.subscribedAt ?? ''),
+    };
+  });
+}

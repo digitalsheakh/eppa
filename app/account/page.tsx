@@ -601,19 +601,6 @@ function AuthForms() {
       </div>
 
       <div className="bg-white border border-gray-100 rounded-2xl shadow-sm p-5 sm:p-6">
-        {/* Google */}
-        <button onClick={handleGoogle} disabled={googleLoading}
-          className="w-full flex items-center justify-center gap-3 border border-gray-200 hover:border-gray-300 hover:bg-gray-50 py-3 rounded-xl text-sm font-semibold text-gray-700 transition-all mb-4 disabled:opacity-50">
-          {googleLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <GoogleIcon />}
-          Continue with Google
-        </button>
-
-        <div className="flex items-center gap-3 mb-4">
-          <div className="flex-1 h-px bg-gray-100" />
-          <span className="text-xs text-gray-400 font-medium">or with email</span>
-          <div className="flex-1 h-px bg-gray-100" />
-        </div>
-
         <form onSubmit={handleSubmit} className="space-y-3">
           {tab === 'register' && (
             <div>

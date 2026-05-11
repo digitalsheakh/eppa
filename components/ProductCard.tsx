@@ -47,7 +47,7 @@ export default function ProductCard({ product }: { product: Product }) {
       {/* Info */}
       <div className="p-3 flex flex-col flex-1">
         <Link href={`/shop/${productSlug(product.name, product.id)}`}>
-          <h3 className="text-sm font-semibold text-black leading-snug line-clamp-2 mb-1 hover:underline">{product.name}</h3>
+          <h3 className="text-sm font-semibold text-black leading-snug line-clamp-2 mb-1 hover:underline min-h-[2.5rem]">{product.name}</h3>
         </Link>
         <p className="text-sm font-bold text-black mb-3">£{product.price.toFixed(2)}</p>
 
