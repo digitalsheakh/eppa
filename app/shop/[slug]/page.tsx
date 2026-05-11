@@ -167,7 +167,7 @@ export default function ProductPage() {
                       ? 'bg-green-500 text-white'
                       : product.stock === 0
                       ? 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                      : 'bg-accent-500 hover:bg-accent-600 text-white shadow-sm hover:shadow-md'
+                      : 'bg-black hover:bg-gray-900 text-white shadow-sm hover:shadow-md'
                   }`}
                 >
                   <AnimatePresence mode="wait">
@@ -195,7 +195,7 @@ export default function ProductPage() {
                     { icon: RotateCcw,   text: 'Easy Returns' },
                   ].map(({ icon: Icon, text }) => (
                     <div key={text} className="flex flex-col items-center gap-1.5 text-center">
-                      <Icon className="w-5 h-5 text-accent-500" />
+                      <Icon className="w-5 h-5 text-gray-500" />
                       <span className="text-xs text-gray-500 font-medium">{text}</span>
                     </div>
                   ))}

@@ -16,7 +16,7 @@ const STATUS_CONFIG: Record<string, { label: string; icon: typeof Package; color
   pending:          { label: 'Order Received',   icon: Clock,         color: 'text-yellow-700', bg: 'bg-yellow-50 border-yellow-200' },
   confirmed:        { label: 'Confirmed',         icon: CheckCircle,   color: 'text-green-700',  bg: 'bg-green-50 border-green-200' },
   processing:       { label: 'Processing',        icon: Package,       color: 'text-purple-700', bg: 'bg-purple-50 border-purple-200' },
-  dispatched:       { label: 'Dispatched',        icon: Truck,         color: 'text-accent-700', bg: 'bg-accent-50 border-accent-200' },
+  dispatched:       { label: 'Dispatched',        icon: Truck,         color: 'text-blue-700',   bg: 'bg-blue-50 border-blue-200' },
   delivered:        { label: 'Delivered',         icon: CheckCircle,   color: 'text-green-700',  bg: 'bg-green-50 border-green-200' },
   cancelled:        { label: 'Cancelled',         icon: XCircle,       color: 'text-red-700',    bg: 'bg-red-50 border-red-200' },
   pending_payment:  { label: 'Awaiting Payment',  icon: Clock,         color: 'text-yellow-700', bg: 'bg-yellow-50 border-yellow-200' },
@@ -77,8 +77,8 @@ function TrackingDetail({ result }: { result: TrackResult }) {
               return (
                 <div key={step} className="flex-1 flex flex-col items-center gap-1.5">
                   <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-colors ${
-                    done ? 'bg-accent-500 text-white' : 'bg-gray-100 text-gray-400'
-                  } ${active ? 'ring-4 ring-accent-100' : ''}`}>
+                    done ? 'bg-black text-white' : 'bg-gray-100 text-gray-400'
+                  } ${active ? 'ring-4 ring-gray-200' : ''}`}>
                     {i + 1}
                   </div>
                   <p className="text-[10px] text-center text-gray-500 font-medium capitalize hidden sm:block">
@@ -90,7 +90,7 @@ function TrackingDetail({ result }: { result: TrackResult }) {
           </div>
           <div className="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-accent-500 rounded-full transition-all duration-500"
+              className="h-full bg-black rounded-full transition-all duration-500"
               style={{ width: stepIdx >= 0 ? `${((stepIdx + 1) / STEPS.length) * 100}%` : '0%' }}
             />
           </div>
@@ -119,7 +119,7 @@ function TrackingDetail({ result }: { result: TrackResult }) {
       )}
 
       {result.status === 'dispatched' && !result.trackingNumber && (
-        <div className="bg-accent-50 border border-accent-200 rounded-2xl p-4 text-sm text-accent-700">
+        <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 text-sm text-gray-700">
           Your order has been dispatched. Tracking details will appear here shortly.
         </div>
       )}
@@ -257,7 +257,7 @@ export default function TrackOrderPage() {
                             {' '}&middot; £{Number(order.total).toFixed(2)}
                           </p>
                         </div>
-                        <Search className="w-4 h-4 text-gray-300 group-hover:text-accent-500 transition-colors shrink-0" />
+                        <Search className="w-4 h-4 text-gray-300 group-hover:text-black transition-colors shrink-0" />
                       </button>
                     );
                   })}

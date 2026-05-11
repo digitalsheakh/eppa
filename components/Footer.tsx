@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import { useState } from 'react';
+import { motion } from 'framer-motion';
 import Logo from './Logo';
 
 export default function Footer() {
@@ -17,7 +18,13 @@ export default function Footer() {
 
       {/* Inner circle signup */}
       <div className="border-b border-gray-200">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center">
+        <motion.div
+          className="max-w-6xl mx-auto px-4 sm:px-6 py-12 sm:py-16 text-center"
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
+        >
           <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-3">Newsletter</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-black mb-2 tracking-tight">
             Join The Inner Circle
@@ -26,7 +33,13 @@ export default function Footer() {
             Giveaways, free samples and much more.
           </p>
           {submitted ? (
-            <p className="text-sm font-semibold text-black">✓ You&apos;re in! Welcome to the inner circle.</p>
+            <motion.p
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="text-sm font-semibold text-black"
+            >
+              ✓ You&apos;re in! Welcome to the inner circle.
+            </motion.p>
           ) : (
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-2 max-w-sm mx-auto">
               <input
@@ -43,7 +56,7 @@ export default function Footer() {
               </button>
             </form>
           )}
-        </div>
+        </motion.div>
       </div>
 
       {/* Bottom bar */}

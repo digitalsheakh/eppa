@@ -1,4 +1,5 @@
 'use client';
+import { motion } from 'framer-motion';
 
 const REVIEWS = [
   {
@@ -48,19 +49,45 @@ function ReviewCard({ title, text, name, time }: typeof REVIEWS[0]) {
   );
 }
 
+const containerVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.1, delayChildren: 0.1 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.25, 0.1, 0.25, 1] } },
+};
+
 export default function Testimonials() {
   return (
     <section className="bg-white border-t border-gray-100 py-12 sm:py-16">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
-        <div className="text-center mb-8">
+        <motion.div
+          className="text-center mb-8"
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: '-40px' }}
+          transition={{ duration: 0.5 }}
+        >
           <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-2">Reviews</p>
           <h2 className="text-2xl sm:text-3xl font-bold text-black">What Our Customers Say</h2>
-        </div>
+        </motion.div>
 
         {/* Desktop grid */}
-        <div className="hidden sm:grid sm:grid-cols-4 gap-4">
-          {REVIEWS.map(r => <ReviewCard key={r.title} {...r} />)}
-        </div>
+        <motion.div
+          className="hidden sm:grid sm:grid-cols-4 gap-4"
+          variants={containerVariants}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-40px' }}
+        >
+          {REVIEWS.map(r => (
+            <motion.div key={r.title} variants={cardVariants}>
+              <ReviewCard {...r} />
+            </motion.div>
+          ))}
+        </motion.div>
 
         {/* Mobile slider */}
         <div className="sm:hidden flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-4 px-4 scrollbar-none">

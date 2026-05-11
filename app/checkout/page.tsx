@@ -430,12 +430,12 @@ export default function CheckoutPage() {
               <p className="text-sm font-bold text-gray-900 mb-4 pb-3 border-b border-gray-100">Payment Method</p>
               <div className="grid grid-cols-2 gap-3 mb-5">
                 <button type="button" onClick={() => setPaymentMethod('card')}
-                  className={`flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 p-3 rounded-xl border-2 text-xs sm:text-sm font-semibold transition-all text-center ${paymentMethod === 'card' ? 'border-accent-500 bg-accent-50 text-accent-700' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}>
+                  className={`flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 p-3 rounded-xl border-2 text-xs sm:text-sm font-semibold transition-all text-center ${paymentMethod === 'card' ? 'border-black bg-gray-50 text-black' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}>
                   <CreditCard className="w-5 h-5 shrink-0" />
                   <span>Card / Apple & Google Pay</span>
                 </button>
                 <button type="button" onClick={() => setPaymentMethod('bank')}
-                  className={`flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 p-3 rounded-xl border-2 text-xs sm:text-sm font-semibold transition-all text-center ${paymentMethod === 'bank' ? 'border-accent-500 bg-accent-50 text-accent-700' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}>
+                  className={`flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 p-3 rounded-xl border-2 text-xs sm:text-sm font-semibold transition-all text-center ${paymentMethod === 'bank' ? 'border-black bg-gray-50 text-black' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}>
                   <Building2 className="w-5 h-5 shrink-0" />
                   <span>Bank Transfer</span>
                 </button>

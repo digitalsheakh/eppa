@@ -124,7 +124,7 @@ function ShopContent() {
               <p className="text-sm text-gray-500">
                 {search ? <>No products match <strong className="text-gray-900">&quot;{search}&quot;</strong>.</> : 'No products available yet.'}
               </p>
-              {search && <button onClick={() => setSearch('')} className="text-sm text-accent-500 font-semibold hover:underline mt-1">Clear search</button>}
+              {search && <button onClick={() => setSearch('')} className="text-sm text-black font-semibold hover:underline mt-1">Clear search</button>}
             </motion.div>
           ) : (
             <motion.div

@@ -42,10 +42,10 @@ export default function CartDrawer() {
             {/* Header */}
             <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
               <div className="flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-accent-500" />
+                <ShoppingBag className="w-5 h-5 text-gray-900" />
                 <h2 className="font-bold text-gray-900 text-base">Your Cart</h2>
                 {items.length > 0 && (
-                  <span className="bg-accent-500 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
+                  <span className="bg-black text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center">
                     {items.reduce((s, i) => s + i.quantity, 0)}
                   </span>
                 )}
@@ -123,7 +123,7 @@ export default function CartDrawer() {
                   </div>
                   <div className="flex justify-between text-gray-600">
                     <span>Delivery</span>
-                    <span className={`font-medium ${delivery === 0 ? 'text-accent-600' : 'text-gray-900'}`}>
+                    <span className={`font-medium ${delivery === 0 ? 'text-green-600' : 'text-gray-900'}`}>
                       {delivery === 0 ? 'FREE' : `£${delivery.toFixed(2)}`}
                     </span>
                   </div>
@@ -133,7 +133,7 @@ export default function CartDrawer() {
                     </p>
                   )}
                   {!belowMinimum && delivery > 0 && subtotal > 0 && (
-                    <p className="text-xs text-accent-600 bg-accent-50 px-3 py-1.5 rounded-lg">
+                    <p className="text-xs text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
                       Add £{(75 - subtotal).toFixed(2)} more for free delivery
                     </p>
                   )}

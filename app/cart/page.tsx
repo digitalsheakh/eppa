@@ -101,12 +101,12 @@ export default function CartPage() {
                 </div>
                 <div className="flex justify-between text-gray-600">
                   <span>Delivery</span>
-                  <span className={`font-medium ${delivery === 0 ? 'text-accent-600' : 'text-gray-900'}`}>
+                  <span className={`font-medium ${delivery === 0 ? 'text-green-600' : 'text-gray-900'}`}>
                     {delivery === 0 ? 'FREE' : `£${delivery.toFixed(2)}`}
                   </span>
                 </div>
                 {delivery > 0 && (
-                  <p className="text-xs text-accent-600 bg-accent-50 px-3 py-2 rounded-xl">
+                  <p className="text-xs text-gray-600 bg-gray-50 border border-gray-100 px-3 py-2 rounded-xl">
                     Add £{(75 - subtotal).toFixed(2)} more for free delivery!
                   </p>
                 )}
@@ -118,7 +118,7 @@ export default function CartPage() {
               <Link href="/checkout" className="btn-primary w-full justify-center mt-4 py-3.5 rounded-xl text-base">
                 Checkout <ArrowRight className="w-4 h-4" />
               </Link>
-              <Link href="/shop" className="block text-center text-sm text-gray-400 hover:text-accent-600 mt-3 transition-colors">
+              <Link href="/shop" className="block text-center text-sm text-gray-400 hover:text-black mt-3 transition-colors">
                 Continue Shopping
               </Link>
             </div>

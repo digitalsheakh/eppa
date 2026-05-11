@@ -16,7 +16,7 @@ import {
 
 const STATUS: Record<string, { label: string; color: string; icon: any }> = {
   pending:         { label: 'Pending',         color: 'bg-yellow-100 text-yellow-700', icon: Clock },
-  pending_payment: { label: 'Awaiting Payment', color: 'bg-orange-100 text-orange-700', icon: Clock },
+  pending_payment: { label: 'Awaiting Payment', color: 'bg-yellow-100 text-yellow-700', icon: Clock },
   confirmed:       { label: 'Confirmed',        color: 'bg-blue-100 text-blue-700',    icon: CheckCircle2 },
   processing:      { label: 'Processing',       color: 'bg-purple-100 text-purple-700', icon: AlertCircle },
   dispatched:      { label: 'Dispatched',       color: 'bg-indigo-100 text-indigo-700', icon: Truck },
@@ -114,7 +114,7 @@ function ReorderModal({ order, onClose }: { order: Order; onClose: () => void })
           </div>
           <button onClick={handleReorder} disabled={added || !order.items?.length}
             className={`w-full py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 transition-all ${
-              added ? 'bg-green-500 text-white' : 'bg-accent-500 hover:bg-accent-600 text-white'
+              added ? 'bg-green-500 text-white' : 'bg-black hover:bg-gray-900 text-white'
             } disabled:opacity-50`}>
             {added ? <><CheckCircle className="w-4 h-4" /> Added to Cart!</>
               : <><RefreshCw className="w-4 h-4" /> Add All to Cart</>}
@@ -192,9 +192,9 @@ function InvoiceModal({ order, onClose }: { order: Order; onClose: () => void })
 
           {/* Tracking */}
           {order.courier && order.trackingNumber && (
-            <div className="mt-4 bg-accent-50 border border-accent-200 rounded-xl p-3 text-sm">
-              <p className="font-semibold text-accent-700">Tracking: {order.courier}</p>
-              <p className="text-accent-600 font-mono text-xs mt-0.5">{order.trackingNumber}</p>
+            <div className="mt-4 bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm">
+              <p className="font-semibold text-gray-700">Tracking: {order.courier}</p>
+              <p className="text-gray-600 font-mono text-xs mt-0.5">{order.trackingNumber}</p>
             </div>
           )}
         </div>
@@ -370,7 +370,7 @@ function AccountDashboard() {
                         <FileText className="w-3 h-3" /> Invoice
                       </button>
                       <button onClick={() => setReorderOrder(order)}
-                        className="text-xs font-medium text-accent-600 hover:text-accent-700 flex items-center gap-1 px-3 py-1.5 bg-accent-50 hover:bg-accent-100 rounded-lg transition-colors">
+                        className="text-xs font-medium text-gray-700 hover:text-black flex items-center gap-1 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
                         <RefreshCw className="w-3 h-3" /> Reorder
                       </button>
                     </div>
@@ -395,7 +395,7 @@ function AccountDashboard() {
                 <p className="text-xs text-gray-500 mb-1">Click any order to add all its items to your cart.</p>
                 {orders.filter(o => o.items && o.items.length > 0).map(order => (
                   <button key={order.id} onClick={() => setReorderOrder(order)}
-                    className="w-full text-left border border-gray-100 rounded-xl p-4 hover:border-accent-300 hover:bg-accent-50/30 transition-all group">
+                    className="w-full text-left border border-gray-100 rounded-xl p-4 hover:border-gray-300 hover:bg-gray-50 transition-all group">
                     <div className="flex items-center justify-between gap-3">
                       <div>
                         <p className="text-sm font-bold text-gray-900">{order.reference || order.id}</p>
@@ -411,7 +411,7 @@ function AccountDashboard() {
                           )}
                         </div>
                       </div>
-                      <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-accent-500 transition-colors shrink-0" />
+                      <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-black transition-colors shrink-0" />
                     </div>
                   </button>
                 ))}
@@ -432,7 +432,7 @@ function AccountDashboard() {
                   <div className="flex items-center justify-between">
                     <p className="text-sm font-semibold text-gray-900">Delivery Details</p>
                     <button onClick={() => setEditing(true)}
-                      className="flex items-center gap-1.5 text-xs text-accent-600 font-semibold hover:text-accent-700 bg-accent-50 hover:bg-accent-100 px-3 py-1.5 rounded-lg transition-colors">
+                      className="flex items-center gap-1.5 text-xs text-gray-700 font-semibold hover:text-black bg-gray-50 hover:bg-gray-100 px-3 py-1.5 rounded-lg transition-colors">
                       <Edit2 className="w-3 h-3" /> Edit
                     </button>
                   </div>
@@ -578,7 +578,7 @@ function AuthForms() {
             </button>
           </form>
           <button onClick={() => setShowReset(false)}
-            className="mt-4 text-sm text-gray-500 hover:text-accent-600 w-full text-center transition-colors">
+            className="mt-4 text-sm text-gray-500 hover:text-black w-full text-center transition-colors">
             ← Back to Sign In
           </button>
         </div>
@@ -660,7 +660,7 @@ function AuthForms() {
 
           {tab === 'login' && (
             <button type="button" onClick={() => setShowReset(true)}
-              className="text-xs text-gray-500 hover:text-accent-600 w-full text-center pt-1 transition-colors">
+              className="text-xs text-gray-500 hover:text-black w-full text-center pt-1 transition-colors">
               Forgot your password?
             </button>
           )}
@@ -687,7 +687,7 @@ export default function AccountPage() {
         ) : loading ? (
           <div className="flex justify-center pt-16">
             <div className="flex flex-col items-center gap-3">
-              <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-t-accent-500 animate-spin" />
+              <div className="w-10 h-10 rounded-full border-4 border-gray-200 border-t-black animate-spin" />
               <p className="text-sm text-gray-400">Loading...</p>
             </div>
           </div>
