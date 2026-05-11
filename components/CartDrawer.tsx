@@ -8,11 +8,14 @@ export default function CartDrawer() {
   const { items, isCartOpen, closeCart, updateQuantity, removeItem, total } = useCartStore();
   const router = useRouter();
 
+  const MIN_ORDER = 20;
   const subtotal = total();
   const delivery = subtotal >= 75 ? 0 : subtotal === 0 ? 0 : 6.99;
   const grandTotal = subtotal + delivery;
+  const belowMinimum = subtotal > 0 && subtotal < MIN_ORDER;
 
   const handleCheckout = () => {
+    if (belowMinimum) return;
     closeCart();
     router.push('/checkout');
   };
@@ -124,7 +127,12 @@ export default function CartDrawer() {
                       {delivery === 0 ? 'FREE' : `£${delivery.toFixed(2)}`}
                     </span>
                   </div>
-                  {delivery > 0 && (
+                  {belowMinimum && (
+                    <p className="text-xs text-red-600 bg-red-50 px-3 py-1.5 rounded-lg font-medium">
+                      Minimum order is £{MIN_ORDER.toFixed(2)} — add £{(MIN_ORDER - subtotal).toFixed(2)} more
+                    </p>
+                  )}
+                  {!belowMinimum && delivery > 0 && subtotal > 0 && (
                     <p className="text-xs text-accent-600 bg-accent-50 px-3 py-1.5 rounded-lg">
                       Add £{(75 - subtotal).toFixed(2)} more for free delivery
                     </p>
@@ -136,7 +144,8 @@ export default function CartDrawer() {
                 </div>
                 <button
                   onClick={handleCheckout}
-                  className="w-full bg-accent-500 hover:bg-accent-600 text-white font-bold py-3.5 rounded-full flex items-center justify-center gap-2 transition-colors text-sm shadow-sm">
+                  disabled={belowMinimum}
+                  className={`w-full font-bold py-3.5 rounded-full flex items-center justify-center gap-2 transition-colors text-sm shadow-sm ${belowMinimum ? 'bg-gray-200 text-gray-400 cursor-not-allowed' : 'bg-accent-500 hover:bg-accent-600 text-white'}`}>
                   Checkout <ArrowRight className="w-4 h-4" />
                 </button>
                 <button onClick={closeCart}

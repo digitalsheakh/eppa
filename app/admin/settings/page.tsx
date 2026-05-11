@@ -17,7 +17,7 @@ function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => void })
       <aside className={`fixed top-0 left-0 h-full w-60 bg-gray-900 text-white z-40 flex flex-col transition-transform duration-300
         ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         <div className="p-5 border-b border-gray-800 flex items-center justify-between">
-          <span className="font-bold text-base tracking-tight">Takeaway<span className="text-accent-400">Bag</span></span>
+          <span className="font-bold text-base tracking-tight">Eppas<span className="text-accent-400"> Shop</span></span>
           <button onClick={onClose} className="md:hidden text-gray-400 hover:text-white"><X className="w-5 h-5" /></button>
         </div>
         <nav className="flex flex-col gap-1 px-3 pt-4 flex-1">
@@ -152,7 +152,7 @@ export default function AdminSettingsPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-gray-700 mb-1.5">Account Name</label>
-                    <input type="text" value={form.accountName} onChange={e => set('accountName', e.target.value)} className="input" placeholder="TakeawayBag.co.uk" />
+                    <input type="text" value={form.accountName} onChange={e => set('accountName', e.target.value)} className="input" placeholder="Eppas Shop" />
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">

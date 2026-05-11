@@ -50,7 +50,7 @@ export const useCartStore = create<CartStore>()(
       itemCount: () => get().items.reduce((sum, i) => sum + i.quantity, 0),
     }),
     {
-      name: 'catering-cart',
+      name: 'eppas-cart',
       partialize: (state) => ({ items: state.items }), // only persist items, not UI state
     }
   )

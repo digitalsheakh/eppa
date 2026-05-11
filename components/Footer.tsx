@@ -57,9 +57,9 @@ export default function Footer() {
 
           {/* Brand */}
           <div>
-            <Link href="/" aria-label="TakeawayBag home"><Logo width={130} height={38} className="max-h-10" /></Link>
+            <Link href="/" aria-label="Eppa's Shop home"><Logo width={130} height={38} className="max-h-10" /></Link>
             <p className="text-sm text-gray-500 mt-2.5 leading-relaxed">
-              The UK's leading supplier of takeaway bags, carrier bags and food packaging.
+              A new era of online shopping. Trusted quality, fast delivery, and exceptional customer support.
             </p>
             <p className="text-sm font-semibold text-gray-700 mt-3 mb-2">Follow us</p>
             <div className="flex gap-2.5">
@@ -98,9 +98,9 @@ export default function Footer() {
       <div className="sm:hidden">
         {/* Top — logo + tagline + social */}
         <div className="px-5 py-4 border-b border-gray-200">
-          <Link href="/" aria-label="TakeawayBag home"><Logo width={120} height={34} className="max-h-9" /></Link>
+          <Link href="/" aria-label="Eppa's Shop home"><Logo width={120} height={34} className="max-h-9" /></Link>
           <p className="text-xs text-gray-500 mt-1.5 leading-relaxed">
-            The UK's leading supplier of takeaway bags &amp; food packaging. Free next-day delivery over £50.
+            A new era of online shopping. Trusted quality &amp; fast delivery. Min. order £20.
           </p>
           <div className="flex items-center gap-2 mt-2.5">
             {SOCIALS.map(({ icon: Icon, href, label }) => (
@@ -150,7 +150,7 @@ export default function Footer() {
       <div className="border-t border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-gray-400 order-2 sm:order-1">
-            &copy; {new Date().getFullYear()} TakeawayBag.co.uk. All rights reserved.
+            &copy; {new Date().getFullYear()} Eppa&apos;s Shop. All rights reserved.
           </p>
           <div className="flex items-center gap-2 order-1 sm:order-2">
             {[

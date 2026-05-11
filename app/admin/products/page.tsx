@@ -24,7 +24,7 @@ function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => void })
         ${open ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
         <div className="p-5 border-b border-gray-800 flex items-center justify-between">
           <span className="font-bold text-base tracking-tight">
-            Takeaway<span className="text-accent-400">Bag</span>
+            Eppas<span className="text-accent-400"> Shop</span>
           </span>
           <button onClick={onClose} className="md:hidden text-gray-400 hover:text-white">
             <X className="w-5 h-5" />

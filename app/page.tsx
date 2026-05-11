@@ -6,10 +6,10 @@ import ProductsSection from '@/components/ProductsSection';
 import Testimonials from '@/components/Testimonials';
 
 export const metadata: Metadata = {
-  title: 'Takeaway Bags UK | Buy Online | Free Next Day Delivery | TakeawayBag.co.uk',
+  title: "Eppa's Shop: Eppa.Shop",
   description:
-    "Buy takeaway bags online from the UK's #1 supplier. Carrier bags, wet towels, food packaging & more. Free next-day delivery on orders over £50. Trusted by 10,000+ restaurants & takeaways.",
-  alternates: { canonical: 'https://www.takeawaybag.co.uk' },
+    'A New Era of Online Shopping! Trusted quality, fast delivery, and exceptional customer support. We make online shopping easy, convenient, and reliable.',
+  alternates: { canonical: 'https://www.eppa.shop' },
 };
 
 export default function Home() {

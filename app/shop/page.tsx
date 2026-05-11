@@ -67,7 +67,7 @@ function ShopContent() {
             <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
               <div>
                 <p className="eyebrow mb-1.5">All Products</p>
-                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Takeaway Bags &amp; Packaging</h1>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Fragrances &amp; More</h1>
                 {!loading && (
                   <p className="text-sm text-gray-500 mt-1">
                     {filtered.length} product{filtered.length !== 1 ? 's' : ''}

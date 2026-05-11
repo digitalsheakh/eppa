@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ['/admin/', '/api/'],
       },
     ],
-    sitemap: 'https://www.takeawaybag.co.uk/sitemap.xml',
+    sitemap: 'https://www.eppas.shop/sitemap.xml',
   };
 }

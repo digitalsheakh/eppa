@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
-const FROM = process.env.EMAIL_FROM || 'TakeawayBag <orders@takeawaybag.co.uk>';
+const FROM = process.env.EMAIL_FROM || "Eppa's Shop <orders@eppa.shop>";
 
 interface OrderEmailData {
   customerName: string;
@@ -112,8 +112,8 @@ function orderEmailHtml(d: OrderEmailData): string {
 
         <!-- Footer -->
         <tr><td style="background:#f3f4f6;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center">
-          <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Questions? Contact us at <a href="mailto:hello@takeawaybag.co.uk" style="color:#15803d">hello@takeawaybag.co.uk</a></p>
-          <p style="margin:0;font-size:12px;color:#9ca3af">TakeawayBag | Premium Takeaway Bags & Packaging</p>
+          <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Questions? Contact us at <a href="mailto:hello@eppa.shop" style="color:#15803d">hello@eppa.shop</a></p>
+          <p style="margin:0;font-size:12px;color:#9ca3af">Eppa's Shop</p>
         </td></tr>
 
       </table>
@@ -130,7 +130,7 @@ export async function sendOrderConfirmation(data: OrderEmailData): Promise<void>
     await resend.emails.send({
       from: FROM,
       to: data.customerEmail,
-      subject: `Order Confirmed: ${data.reference} | TakeawayBag`,
+      subject: `Order Confirmed: ${data.reference} | Eppa's Shop`,
       html: orderEmailHtml(data),
     });
   } catch (err) {
@@ -171,7 +171,7 @@ export async function sendAdminOrderNotification(data: OrderEmailData): Promise<
         <tbody>${itemRows}</tbody>
       </table>
       <div style="margin-top:20px;text-align:center">
-        <a href="https://www.takeawaybag.co.uk/admin/orders" style="background:#f26522;color:#fff;padding:10px 24px;border-radius:99px;text-decoration:none;font-size:13px;font-weight:600">View in Admin</a>
+        <a href="https://www.eppa.shop/admin/orders" style="background:#f26522;color:#fff;padding:10px 24px;border-radius:99px;text-decoration:none;font-size:13px;font-weight:600">View in Admin</a>
       </div>
     </div>
   </div>

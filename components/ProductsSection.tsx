@@ -38,7 +38,7 @@ export default function ProductsSection() {
           <div>
             <p className="eyebrow mb-2">Featured Products</p>
             <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
-              Popular Takeaway Bags
+              Featured Fragrances
             </h2>
           </div>
           {!loading && products.length > 0 && (
