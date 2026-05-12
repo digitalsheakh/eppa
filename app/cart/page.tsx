@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 export default function CartPage() {
   const { items, updateQuantity, removeItem, total } = useCartStore();
   const subtotal = total();
-  const delivery = subtotal >= 75 ? 0 : 6.99;
+  const delivery = subtotal >= 10 ? 0 : 2.99;
   const grandTotal = subtotal + delivery;
 
   if (items.length === 0) {
@@ -107,7 +107,7 @@ export default function CartPage() {
                 </div>
                 {delivery > 0 && (
                   <p className="text-xs text-gray-600 bg-gray-50 border border-gray-100 px-3 py-2 rounded-xl">
-                    Add £{(75 - subtotal).toFixed(2)} more for free delivery!
+                    Add £{(10 - subtotal).toFixed(2)} more for free delivery!
                   </p>
                 )}
               </div>

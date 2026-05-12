@@ -318,9 +318,7 @@ export default function CheckoutPage() {
   const { items, total } = useCartStore();
   const { user, profile } = useAuth();
   const subtotal = total();
-  const MIN_ORDER = 20;
-  const delivery = subtotal >= 75 ? 0 : 6.99;
-  const belowMinimum = subtotal > 0 && subtotal < MIN_ORDER;
+  const delivery = subtotal >= 10 ? 0 : 2.99;
 
   const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank'>('card');
   const [stripePromise, setStripePromise] = useState<ReturnType<typeof loadStripe> | null>(null);
@@ -406,12 +404,6 @@ export default function CheckoutPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-5 flex flex-col lg:flex-row gap-5">
           {/* Left — delivery + payment */}
           <div className="flex-1 space-y-4">
-            {/* Minimum order warning */}
-            {belowMinimum && (
-              <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 text-sm text-red-700 font-medium">
-                ⚠️ Minimum order is £{MIN_ORDER.toFixed(2)}. Please add £{(MIN_ORDER - subtotal).toFixed(2)} more to proceed.
-              </div>
-            )}
             {/* Autofill notice */}
             {user && profile && (
               <div className="bg-primary-50 border border-primary-200 rounded-xl px-4 py-3 text-sm text-primary-700">
@@ -493,7 +485,7 @@ export default function CheckoutPage() {
                     {delivery === 0 ? 'FREE' : `£${delivery.toFixed(2)}`}
                   </span>
                 </div>
-                {delivery > 0 && <p className="text-xs text-gray-400">Add £{(75 - subtotal).toFixed(2)} more for free delivery</p>}
+                {delivery > 0 && <p className="text-xs text-gray-400">Add £{(10 - subtotal).toFixed(2)} more for free delivery</p>}
                 <div className="flex justify-between font-bold text-base pt-3 border-t border-gray-100">
                   <span>Total</span><span>£{(subtotal + delivery).toFixed(2)}</span>
                 </div>

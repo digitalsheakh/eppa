@@ -8,14 +8,11 @@ export default function CartDrawer() {
   const { items, isCartOpen, closeCart, updateQuantity, removeItem, total } = useCartStore();
   const router = useRouter();
 
-  const MIN_ORDER = 20;
   const subtotal = total();
-  const delivery = subtotal >= 75 ? 0 : subtotal === 0 ? 0 : 6.99;
+  const delivery = subtotal >= 10 ? 0 : subtotal === 0 ? 0 : 2.99;
   const grandTotal = subtotal + delivery;
-  const belowMinimum = subtotal > 0 && subtotal < MIN_ORDER;
 
   const handleCheckout = () => {
-    if (belowMinimum) return;
     closeCart();
     router.push('/checkout');
   };
@@ -127,14 +124,9 @@ export default function CartDrawer() {
                       {delivery === 0 ? 'FREE' : `£${delivery.toFixed(2)}`}
                     </span>
                   </div>
-                  {belowMinimum && (
-                    <p className="text-xs text-red-600 bg-red-50 px-3 py-1.5 rounded-lg font-medium">
-                      Minimum order is £{MIN_ORDER.toFixed(2)} — add £{(MIN_ORDER - subtotal).toFixed(2)} more
-                    </p>
-                  )}
-                  {!belowMinimum && delivery > 0 && subtotal > 0 && (
+                  {delivery > 0 && subtotal > 0 && (
                     <p className="text-xs text-gray-600 bg-gray-50 px-3 py-1.5 rounded-lg border border-gray-100">
-                      Add £{(75 - subtotal).toFixed(2)} more for free delivery
+                      Add £{(10 - subtotal).toFixed(2)} more for free delivery
                     </p>
                   )}
                 </div>
@@ -144,8 +136,7 @@ export default function CartDrawer() {
                 </div>
                 <button
                   onClick={handleCheckout}
-                  disabled={belowMinimum}
-                  className={`w-full font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm ${belowMinimum ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-black hover:bg-gray-900 text-white'}`}>
+                  className="w-full font-bold py-3.5 rounded-lg flex items-center justify-center gap-2 transition-colors text-sm bg-black hover:bg-gray-900 text-white">
                   Checkout <ArrowRight className="w-4 h-4" />
                 </button>
                 <button onClick={closeCart}
