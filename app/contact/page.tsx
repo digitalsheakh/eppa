@@ -18,8 +18,17 @@ export default function ContactPage() {
     setLoading(true);
     setError('');
     try {
-      await new Promise(r => setTimeout(r, 1000));
-      setSent(true);
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSent(true);
+      } else {
+        setError(data.error || 'Something went wrong. Please email us directly.');
+      }
     } catch {
       setError('Something went wrong. Please email us directly.');
     } finally {
@@ -63,15 +72,15 @@ export default function ContactPage() {
                   icon: Mail,
                   title: 'Email Us',
                   desc: 'For orders, returns, and general enquiries.',
-                  value: 'support@eppa.shop',
-                  href: 'mailto:support@eppa.shop',
+                  value: 'eppa.shop.uk@gmail.com',
+                  href: 'mailto:eppa.shop.uk@gmail.com',
                 },
                 {
                   icon: MessageSquare,
                   title: 'Fragrance Advice',
                   desc: 'Not sure which scent to pick? We love helping.',
-                  value: 'hello@eppa.shop',
-                  href: 'mailto:hello@eppa.shop',
+                  value: 'eppa.shop.uk@gmail.com',
+                  href: 'mailto:eppa.shop.uk@gmail.com',
                 },
                 {
                   icon: Clock,
