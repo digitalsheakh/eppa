@@ -84,8 +84,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!auth) throw new Error('Firebase not configured');
     const cred = await createUserWithEmailAndPassword(auth, email, password);
     await updateProfile(cred.user, { displayName: name });
-    // onAuthStateChanged handles setUser automatically; force-refresh so displayName propagates
     await cred.user.reload();
+    // Send welcome email (fire-and-forget)
+    fetch('/api/auth/welcome', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email }),
+    }).catch(() => {});
   };
 
   const logout = async () => {

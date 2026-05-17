@@ -140,9 +140,52 @@ export async function sendOrderConfirmation(data: OrderEmailData): Promise<void>
 }
 
 
+export async function sendWelcomeEmail(name: string, email: string): Promise<void> {
+  if (!resend || !email) return;
+  const firstName = name.split(' ')[0];
+  const html = `<!DOCTYPE html><html>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
+<body style="margin:0;padding:0;background:#f9fafb;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f9fafb;padding:32px 16px">
+    <tr><td align="center">
+      <table width="100%" cellpadding="0" cellspacing="0" style="max-width:520px">
+        <tr><td style="background:#000000;border-radius:12px 12px 0 0;padding:36px 32px;text-align:center">
+          <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:3px;color:#999;text-transform:uppercase">Welcome</p>
+          <h1 style="margin:0;font-size:30px;font-weight:800;color:#ffffff">Hi ${firstName}, welcome to Eppa's Shop!</h1>
+          <p style="margin:12px 0 0;font-size:14px;color:#aaa">Your account has been created successfully.</p>
+        </td></tr>
+        <tr><td style="background:#ffffff;padding:32px">
+          <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.6">
+            Thanks for joining us. You can now browse our full fragrance collection, track your orders, and save your delivery details for a faster checkout.
+          </p>
+          <div style="text-align:center;margin:28px 0">
+            <a href="https://eppa.vercel.app/shop" style="background:#000;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700">Shop Now</a>
+          </div>
+          <p style="margin:24px 0 0;font-size:13px;color:#9ca3af">If you didn't create this account, please ignore this email.</p>
+        </td></tr>
+        <tr><td style="background:#f3f4f6;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center">
+          <p style="margin:0;font-size:12px;color:#9ca3af">Eppa's Shop &mdash; Premium Fragrances</p>
+        </td></tr>
+      </table>
+    </td></tr>
+  </table>
+</body></html>`;
+
+  try {
+    await resend.emails.send({
+      from: FROM,
+      to: email,
+      subject: `Welcome to Eppa's Shop, ${firstName}!`,
+      html,
+    });
+  } catch (err) {
+    console.error('Welcome email failed:', err);
+  }
+}
+
 export async function sendAdminOrderNotification(data: OrderEmailData): Promise<void> {
   if (!resend) return;
-  const adminEmail = process.env.ADMIN_EMAIL || 'digitalsheakh@gmail.com';
+  const adminEmail = process.env.ADMIN_EMAIL || 'eppa.shop.uk@gmail.com';
   const itemRows = data.items.map(i =>
     `<tr><td style="padding:6px 0;font-size:13px;border-bottom:1px solid #f3f4f6">${i.productName}</td><td style="padding:6px 0;font-size:13px;border-bottom:1px solid #f3f4f6;text-align:center">${i.quantity}</td><td style="padding:6px 0;font-size:13px;border-bottom:1px solid #f3f4f6;text-align:right">£${(i.price * i.quantity).toFixed(2)}</td></tr>`
   ).join('');
