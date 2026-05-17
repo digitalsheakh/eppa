@@ -515,7 +515,7 @@ function AuthForms() {
     setError(''); setLoading(true);
     try {
       await resetPassword(form.email);
-      setSuccess('Password reset email sent! Check your inbox.');
+      setSuccess("Password reset email sent! Check your inbox — if you don't see it, please check your spam folder too.");
       setShowReset(false);
     } catch { setError('Failed to send reset email. Check the address and try again.'); }
     finally { setLoading(false); }
