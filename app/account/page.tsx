@@ -4,11 +4,10 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useAuth } from '@/contexts/AuthContext';
 import type { UserProfile } from '@/contexts/AuthContext';
-import { useCartStore } from '@/lib/cartStore';
 import {
   User, Package, LogOut, Loader2, KeyRound, MapPin, Save, CheckCircle2,
   LogIn, UserPlus, ShoppingBag, Clock, XCircle, Truck, CheckCircle,
-  AlertCircle, Edit2, Eye, EyeOff, RefreshCw, FileText, X, ChevronRight,
+  AlertCircle, Edit2, Eye, EyeOff, FileText, X,
   Phone, Mail, Home,
 } from 'lucide-react';
 
@@ -56,73 +55,6 @@ interface Order {
   items?: OrderItem[]; phone?: string;
   addressLine1?: string; city?: string; postcode?: string;
   courier?: string; trackingNumber?: string;
-}
-
-// ─── Reorder Modal ───────────────────────────────────────────────────────────
-
-function ReorderModal({ order, onClose }: { order: Order; onClose: () => void }) {
-  const addItem = useCartStore(s => s.addItem);
-  const openCart = useCartStore(s => s.openCart);
-  const [added, setAdded] = useState(false);
-
-  const handleReorder = () => {
-    if (!order.items) return;
-    for (const item of order.items) {
-      for (let i = 0; i < item.qty; i++) {
-        addItem({ id: item.id || item.name, name: item.name, price: item.price, unit: item.unit || 'each', image: item.image || '' });
-      }
-    }
-    setAdded(true);
-    setTimeout(() => { onClose(); openCart(); }, 800);
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md max-h-[85vh] overflow-hidden">
-        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-          <div>
-            <h3 className="font-bold text-gray-900">Reorder</h3>
-            <p className="text-xs text-gray-500">{order.reference || order.id}</p>
-          </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-            <X className="w-4 h-4 text-gray-500" />
-          </button>
-        </div>
-
-        <div className="p-5 overflow-y-auto max-h-[50vh] space-y-3">
-          {order.items && order.items.length > 0 ? order.items.map((item, i) => (
-            <div key={i} className="flex items-center gap-3 bg-gray-50 rounded-xl p-3">
-              {item.image && (
-                <img src={item.image} alt={item.name} className="w-12 h-12 rounded-lg object-cover shrink-0 border border-gray-200" />
-              )}
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-900 truncate">{item.name}</p>
-                <p className="text-xs text-gray-500">Qty: {item.qty} &times; £{item.price.toFixed(2)}</p>
-              </div>
-              <p className="text-sm font-bold text-gray-900 shrink-0">£{(item.qty * item.price).toFixed(2)}</p>
-            </div>
-          )) : (
-            <p className="text-sm text-gray-400 text-center py-6">No item details available for this order.</p>
-          )}
-        </div>
-
-        <div className="p-5 border-t border-gray-100 bg-gray-50">
-          <div className="flex justify-between text-sm mb-4">
-            <span className="text-gray-500">Original total</span>
-            <span className="font-bold text-gray-900">£{Number(order.total).toFixed(2)}</span>
-          </div>
-          <button onClick={handleReorder} disabled={added || !order.items?.length}
-            className={`w-full py-3 rounded-full text-sm font-bold flex items-center justify-center gap-2 transition-all ${
-              added ? 'bg-green-500 text-white' : 'bg-black hover:bg-gray-900 text-white'
-            } disabled:opacity-50`}>
-            {added ? <><CheckCircle className="w-4 h-4" /> Added to Cart!</>
-              : <><RefreshCw className="w-4 h-4" /> Add All to Cart</>}
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 // ─── Invoice Modal ───────────────────────────────────────────────────────────
@@ -205,7 +137,7 @@ function InvoiceModal({ order, onClose }: { order: Order; onClose: () => void })
 
 // ─── Dashboard ────────────────────────────────────────────────────────────────
 
-type DashTab = 'orders' | 'reorder' | 'address';
+type DashTab = 'orders' | 'address';
 
 function AccountDashboard() {
   const { user, profile, logout, saveProfile } = useAuth();
@@ -214,9 +146,9 @@ function AccountDashboard() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState('');
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
-  const [reorderOrder, setReorderOrder] = useState<Order | null>(null);
   const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
   const [form, setForm] = useState<UserProfile>({
     displayName: profile?.displayName || user?.displayName || '',
@@ -253,12 +185,15 @@ function AccountDashboard() {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
+    setSaveError('');
     try {
       await saveProfile(form);
       setSaved(true);
       setEditing(false);
       setTimeout(() => setSaved(false), 3000);
-    } catch {}
+    } catch (err: any) {
+      setSaveError(err?.message || 'Failed to save. Please try again.');
+    }
     setSaving(false);
   };
 
@@ -271,8 +206,7 @@ function AccountDashboard() {
 
   const TABS = [
     { key: 'orders' as DashTab,  label: 'My Orders',  icon: Package },
-    { key: 'reorder' as DashTab, label: 'Reorder',    icon: RefreshCw },
-    { key: 'address' as DashTab, label: 'My Details',  icon: MapPin },
+    { key: 'address' as DashTab, label: 'My Details', icon: MapPin },
   ];
 
   return (
@@ -364,56 +298,13 @@ function AccountDashboard() {
                         <span className="text-sm font-bold text-gray-900">£{Number(order.total).toFixed(2)}</span>
                       </div>
                     </div>
-                    <div className="px-4 pb-3 flex gap-2">
+                    <div className="px-4 pb-3">
                       <button onClick={() => setInvoiceOrder(order)}
                         className="text-xs font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
                         <FileText className="w-3 h-3" /> Invoice
                       </button>
-                      <button onClick={() => setReorderOrder(order)}
-                        className="text-xs font-medium text-gray-700 hover:text-black flex items-center gap-1 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
-                        <RefreshCw className="w-3 h-3" /> Reorder
-                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
-            )
-          )}
-
-          {/* ── Reorder tab ── */}
-          {tab === 'reorder' && (
-            loadingOrders ? (
-              <div className="space-y-3">{[1, 2].map(i => <div key={i} className="h-24 skeleton rounded-xl" />)}</div>
-            ) : deliveredOrders.length === 0 ? (
-              <div className="text-center py-12">
-                <RefreshCw className="w-10 h-10 text-gray-300 mx-auto mb-3" />
-                <p className="text-sm font-semibold text-gray-600">No delivered orders to reorder</p>
-                <p className="text-xs text-gray-400 mt-1">Once you receive an order, you can quickly reorder it here.</p>
-              </div>
-            ) : (
-              <div className="space-y-3">
-                <p className="text-xs text-gray-500 mb-1">Click any order to add all its items to your cart.</p>
-                {orders.filter(o => o.items && o.items.length > 0).map(order => (
-                  <button key={order.id} onClick={() => setReorderOrder(order)}
-                    className="w-full text-left border border-gray-100 rounded-xl p-4 hover:border-gray-300 hover:bg-gray-50 transition-all group">
-                    <div className="flex items-center justify-between gap-3">
-                      <div>
-                        <p className="text-sm font-bold text-gray-900">{order.reference || order.id}</p>
-                        <p className="text-xs text-gray-500 mt-0.5">
-                          {order.items?.length} item{order.items?.length !== 1 ? 's' : ''} &middot; £{Number(order.total).toFixed(2)}
-                        </p>
-                        <div className="flex gap-1 mt-2 flex-wrap">
-                          {order.items?.slice(0, 3).map((item, i) => (
-                            <span key={i} className="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{item.name}</span>
-                          ))}
-                          {(order.items?.length || 0) > 3 && (
-                            <span className="text-[10px] bg-gray-100 text-gray-400 px-2 py-0.5 rounded-full">+{(order.items?.length || 0) - 3} more</span>
-                          )}
-                        </div>
-                      </div>
-                      <ChevronRight className="w-5 h-5 text-gray-300 group-hover:text-black transition-colors shrink-0" />
-                    </div>
-                  </button>
                 ))}
               </div>
             )
@@ -478,13 +369,16 @@ function AccountDashboard() {
                       </div>
                     ))}
                   </div>
+                  {saveError && (
+                    <p className="text-sm text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-xl">{saveError}</p>
+                  )}
                   <div className="flex gap-2 pt-1">
                     <button type="submit" disabled={saving}
                       className="btn-primary px-5 py-2.5 gap-2 text-sm justify-center disabled:opacity-50">
                       {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                       Save Details
                     </button>
-                    <button type="button" onClick={() => setEditing(false)}
+                    <button type="button" onClick={() => { setEditing(false); setSaveError(''); }}
                       className="px-5 py-2.5 text-sm text-gray-500 hover:text-gray-700 font-medium border border-gray-200 rounded-full transition-colors">
                       Cancel
                     </button>
@@ -496,8 +390,6 @@ function AccountDashboard() {
         </div>
       </div>
 
-      {/* Modals */}
-      {reorderOrder && <ReorderModal order={reorderOrder} onClose={() => setReorderOrder(null)} />}
       {invoiceOrder && <InvoiceModal order={invoiceOrder} onClose={() => setInvoiceOrder(null)} />}
     </div>
   );
