@@ -31,9 +31,11 @@ function SkeletonCard() {
 
 function ShopContent() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [sort, setSort] = useState('name_asc');
+  const [activeCategory, setActiveCategory] = useState('');
   const searchParams = useSearchParams();
 
   useEffect(() => {
@@ -42,14 +44,22 @@ function ShopContent() {
   }, [searchParams]);
 
   useEffect(() => {
-    fetch('/api/products')
-      .then(r => r.json())
-      .then(data => { setProducts(Array.isArray(data) ? data : []); setLoading(false); })
-      .catch(() => setLoading(false));
+    Promise.all([
+      fetch('/api/products').then(r => r.json()),
+      fetch('/api/categories').then(r => r.json()),
+    ]).then(([prods, cats]) => {
+      setProducts(Array.isArray(prods) ? prods : []);
+      setCategories(Array.isArray(cats) ? cats : []);
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, []);
 
   const filtered = products
-    .filter(p => !search || p.name.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase()))
+    .filter(p => {
+      const matchSearch = !search || p.name.toLowerCase().includes(search.toLowerCase()) || p.category.toLowerCase().includes(search.toLowerCase());
+      const matchCategory = !activeCategory || p.category === activeCategory;
+      return matchSearch && matchCategory;
+    })
     .sort((a, b) => {
       if (sort === 'name_asc')   return a.name.localeCompare(b.name);
       if (sort === 'name_desc')  return b.name.localeCompare(a.name);
@@ -102,6 +112,33 @@ function ShopContent() {
             </div>
           </div>
         </div>
+
+        {/* Category pills */}
+        {categories.length > 0 && (
+          <div className="border-b border-gray-100 bg-white">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-3 flex gap-2 flex-wrap">
+              <button
+                onClick={() => setActiveCategory('')}
+                className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                  !activeCategory ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                All
+              </button>
+              {categories.map(cat => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(activeCategory === cat ? '' : cat)}
+                  className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                    activeCategory === cat ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
           {loading ? (

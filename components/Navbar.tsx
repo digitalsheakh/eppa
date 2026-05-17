@@ -1,8 +1,8 @@
 'use client';
 import Link from 'next/link';
-import { ShoppingBag, Search, X, ChevronRight, User, MapPin } from 'lucide-react';
+import { ShoppingBag, Search, X, ChevronRight, User } from 'lucide-react';
 import { useCartStore } from '@/lib/cartStore';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, usePathname } from 'next/navigation';
 import Logo from './Logo';
@@ -17,10 +17,21 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchVal, setSearchVal] = useState('');
+  const [cartBump, setCartBump] = useState(false);
+  const prevCount = useRef(itemCount);
   const router = useRouter();
   const pathname = usePathname();
 
-  useEffect(() => { setOpen(false); setSearchOpen(false); }, [pathname]);
+  useEffect(() => {
+    if (itemCount > prevCount.current) {
+      setCartBump(true);
+      const t = setTimeout(() => setCartBump(false), 400);
+      return () => clearTimeout(t);
+    }
+    prevCount.current = itemCount;
+  }, [itemCount]);
+
+  useEffect(() => { setOpen(false); setSearchOpen(false); setCartBump(false); }, [pathname]);
   useEffect(() => {
     document.body.style.overflow = (open || isCartOpen) ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
@@ -94,11 +105,13 @@ export default function Navbar() {
             </Link>
 
             {/* Cart */}
-            <button onClick={openCart}
+            <motion.button onClick={openCart}
+              animate={cartBump ? { scale: [1, 1.3, 1] } : {}}
+              transition={{ duration: 0.35, ease: 'easeInOut' }}
               className="flex items-center gap-1.5 text-sm font-medium text-gray-900 hover:text-black transition-colors p-1.5">
               <ShoppingBag style={{ width: 18, height: 18 }} />
               <span className="text-sm font-semibold">{itemCount}</span>
-            </button>
+            </motion.button>
 
             {/* Mobile hamburger */}
             <button className="md:hidden p-1.5 text-gray-600" onClick={() => setOpen(true)}>

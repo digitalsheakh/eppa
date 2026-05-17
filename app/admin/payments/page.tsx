@@ -1,6 +1,7 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Loader2, Menu, PoundSterling, CreditCard, Building2, TrendingUp, ShoppingBag } from 'lucide-react';
+import { Loader2, Menu, PoundSterling, CreditCard, Building2, TrendingUp, ShoppingBag, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
 import AdminSidebar from '@/components/AdminSidebar';
 
 interface Order {
@@ -131,16 +132,31 @@ export default function AdminPaymentsPage() {
                 </div>
                 <div className="divide-y divide-gray-50">
                   {paid.slice(0, 20).map(order => (
-                    <div key={order.id} className="px-5 py-3.5 flex items-center justify-between">
+                    <Link key={order.id} href={`/admin/orders/${order.id}`}
+                      className="px-5 py-3.5 flex items-center justify-between hover:bg-gray-50 transition-colors group">
                       <div>
                         <p className="text-sm font-semibold text-gray-900 font-mono">#{order.reference || order.id.slice(0,8)}</p>
-                        <p className="text-xs text-gray-400">{order.customerName} · {new Date(order.createdAt).toLocaleDateString('en-GB')}</p>
+                        <p className="text-xs text-gray-400">{order.customerName} · {new Date(order.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">
+                          <span className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                            order.paymentMethod === 'bank_transfer' ? 'bg-purple-50 text-purple-700' : 'bg-blue-50 text-blue-700'
+                          }`}>
+                            {order.paymentMethod === 'bank_transfer' ? 'Bank Transfer' : 'Card'}
+                          </span>
+                        </p>
                       </div>
-                      <div className="text-right">
-                        <p className="font-bold text-gray-900">£{order.total.toFixed(2)}</p>
-                        <p className="text-xs text-gray-400">{order.paymentMethod === 'bank_transfer' ? 'Bank' : 'Card'}</p>
+                      <div className="flex items-center gap-2">
+                        <div className="text-right">
+                          <p className="font-bold text-gray-900">£{order.total.toFixed(2)}</p>
+                          <p className={`text-xs font-semibold ${
+                            order.status === 'delivered' ? 'text-green-600'
+                            : order.status === 'cancelled' ? 'text-red-500'
+                            : 'text-gray-400'
+                          }`}>{order.status === 'pending_payment' ? 'Awaiting Payment' : order.status.charAt(0).toUpperCase() + order.status.slice(1)}</p>
+                        </div>
+                        <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-gray-500 transition-colors" />
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>

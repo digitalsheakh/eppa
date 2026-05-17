@@ -35,20 +35,30 @@ const itemVariants = {
 
 export default function ProductsSection() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<string[]>([]);
+  const [activeCategory, setActiveCategory] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/api/products')
-      .then(r => r.json())
-      .then(data => { setProducts(Array.isArray(data) ? data : []); setLoading(false); })
-      .catch(() => setLoading(false));
+    Promise.all([
+      fetch('/api/products').then(r => r.json()),
+      fetch('/api/categories').then(r => r.json()),
+    ]).then(([prods, cats]) => {
+      setProducts(Array.isArray(prods) ? prods : []);
+      setCategories(Array.isArray(cats) ? cats : []);
+      setLoading(false);
+    }).catch(() => setLoading(false));
   }, []);
+
+  const displayed = products
+    .filter(p => !activeCategory || p.category === activeCategory)
+    .slice(0, 8);
 
   return (
     <section className="bg-white py-12 sm:py-16 border-t border-gray-100">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <motion.div
-          className="flex items-end justify-between mb-7"
+          className="flex items-end justify-between mb-6"
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, margin: '-40px' }}
@@ -65,6 +75,31 @@ export default function ProductsSection() {
             </Link>
           )}
         </motion.div>
+
+        {/* Category pills */}
+        {!loading && categories.length > 0 && (
+          <div className="flex gap-2 flex-wrap mb-6">
+            <button
+              onClick={() => setActiveCategory('')}
+              className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                !activeCategory ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              All
+            </button>
+            {categories.map(cat => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(activeCategory === cat ? '' : cat)}
+                className={`px-4 py-1.5 rounded-full text-sm font-semibold transition-colors ${
+                  activeCategory === cat ? 'bg-black text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
 
         {loading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
@@ -86,7 +121,7 @@ export default function ProductsSection() {
             whileInView="visible"
             viewport={{ once: true, margin: '-60px' }}
           >
-            {products.slice(0, 6).map(p => (
+            {displayed.map(p => (
               <motion.div key={p.id} variants={itemVariants}>
                 <ProductCard product={p} />
               </motion.div>
