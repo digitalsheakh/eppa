@@ -254,6 +254,66 @@ export async function getOrderItems(orderId: string): Promise<OrderItem[]> {
   return items.map((item: any) => ({ ...item, orderId }));
 }
 
+// ─── RETURNS ──────────────────────────────────────────────────────────────────
+
+export interface ReturnRequest {
+  id: string;
+  orderId: string;
+  orderReference: string;
+  customerName: string;
+  email: string;
+  reason: string;
+  status: string;
+  createdAt: string;
+}
+
+export async function createReturnRequest(data: Omit<ReturnRequest, 'id' | 'createdAt' | 'status'>): Promise<string> {
+  const db = getAdminDb();
+  if (!db) throw new Error('Firestore not configured');
+  const ref = await db.collection('returns').add({ ...data, status: 'pending', createdAt: Timestamp.now() });
+  return ref.id;
+}
+
+export async function getReturnRequests(): Promise<ReturnRequest[]> {
+  const db = getAdminDb();
+  if (!db) return [];
+  const snap = await db.collection('returns').orderBy('createdAt', 'desc').get();
+  return snap.docs.map(doc => {
+    const d = doc.data();
+    return {
+      id: doc.id,
+      orderId: d.orderId ?? '',
+      orderReference: d.orderReference ?? '',
+      customerName: d.customerName ?? '',
+      email: d.email ?? '',
+      reason: d.reason ?? '',
+      status: d.status ?? 'pending',
+      createdAt: d.createdAt instanceof Timestamp ? d.createdAt.toDate().toISOString() : (d.createdAt ?? ''),
+    };
+  });
+}
+
+export async function updateReturnStatus(id: string, status: string): Promise<void> {
+  const db = getAdminDb();
+  if (!db) throw new Error('Firestore not configured');
+  await db.collection('returns').doc(id).update({ status, updatedAt: Timestamp.now() });
+}
+
+// ─── SEQUENTIAL ORDER REFERENCE ───────────────────────────────────────────────
+
+export async function getNextOrderRef(): Promise<string> {
+  const db = getAdminDb();
+  if (!db) return `ES${Math.floor(Math.random() * 9000) + 1000}`;
+  const counterRef = db.collection('counters').doc('orders');
+  const count = await db.runTransaction(async tx => {
+    const doc = await tx.get(counterRef);
+    const next = (doc.exists ? (doc.data()?.count || 0) : 0) + 1;
+    tx.set(counterRef, { count: next }, { merge: true });
+    return next;
+  });
+  return `ES${String(count).padStart(3, '0')}`;
+}
+
 // ─── SUBSCRIBERS ──────────────────────────────────────────────────────────────
 
 export interface Subscriber {

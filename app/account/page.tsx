@@ -7,7 +7,7 @@ import type { UserProfile } from '@/contexts/AuthContext';
 import {
   User, Package, LogOut, Loader2, KeyRound, MapPin, Save, CheckCircle2,
   LogIn, UserPlus, ShoppingBag, Clock, XCircle, Truck, CheckCircle,
-  AlertCircle, Edit2, Eye, EyeOff, FileText, X,
+  AlertCircle, Edit2, Eye, EyeOff, FileText, X, RotateCcw,
   Phone, Mail, Home,
 } from 'lucide-react';
 
@@ -150,6 +150,10 @@ function AccountDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [loadingOrders, setLoadingOrders] = useState(true);
   const [invoiceOrder, setInvoiceOrder] = useState<Order | null>(null);
+  const [returnOrder, setReturnOrder] = useState<Order | null>(null);
+  const [returnReason, setReturnReason] = useState('');
+  const [submittingReturn, setSubmittingReturn] = useState(false);
+  const [returnSubmitted, setReturnSubmitted] = useState<string | null>(null);
   const [form, setForm] = useState<UserProfile>({
     displayName: profile?.displayName || user?.displayName || '',
     phone: profile?.phone || '',
@@ -298,11 +302,22 @@ function AccountDashboard() {
                         <span className="text-sm font-bold text-gray-900">£{Number(order.total).toFixed(2)}</span>
                       </div>
                     </div>
-                    <div className="px-4 pb-3">
+                    <div className="px-4 pb-3 flex gap-2">
                       <button onClick={() => setInvoiceOrder(order)}
                         className="text-xs font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
                         <FileText className="w-3 h-3" /> Invoice
                       </button>
+                      {order.status === 'delivered' && returnSubmitted !== order.id && (
+                        <button onClick={() => { setReturnOrder(order); setReturnReason(''); }}
+                          className="text-xs font-medium text-gray-500 hover:text-gray-900 flex items-center gap-1 px-3 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors">
+                          <RotateCcw className="w-3 h-3" /> Return
+                        </button>
+                      )}
+                      {returnSubmitted === order.id && (
+                        <span className="text-xs font-medium text-green-600 flex items-center gap-1 px-3 py-1.5">
+                          <CheckCircle2 className="w-3 h-3" /> Return requested
+                        </span>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -391,6 +406,58 @@ function AccountDashboard() {
       </div>
 
       {invoiceOrder && <InvoiceModal order={invoiceOrder} onClose={() => setInvoiceOrder(null)} />}
+
+      {/* Return request modal */}
+      {returnOrder && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" onClick={() => setReturnOrder(null)} />
+          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+              <div>
+                <h3 className="font-bold text-gray-900">Request Return</h3>
+                <p className="text-xs text-gray-500">#{returnOrder.reference || returnOrder.id.slice(0,8)}</p>
+              </div>
+              <button onClick={() => setReturnOrder(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+                <X className="w-4 h-4 text-gray-500" />
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              <p className="text-sm text-gray-500">Please describe the reason for your return request.</p>
+              <textarea
+                value={returnReason}
+                onChange={e => setReturnReason(e.target.value)}
+                placeholder="e.g. Item damaged, wrong product received..."
+                rows={4}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-black transition-colors resize-none"
+              />
+              <button
+                disabled={!returnReason.trim() || submittingReturn}
+                onClick={async () => {
+                  if (!returnReason.trim() || !returnOrder) return;
+                  setSubmittingReturn(true);
+                  await fetch('/api/returns', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                      orderId: returnOrder.id,
+                      orderReference: returnOrder.reference || returnOrder.id.slice(0,8),
+                      customerName: user?.displayName || profile?.displayName || '',
+                      email: user?.email || '',
+                      reason: returnReason.trim(),
+                    }),
+                  });
+                  setReturnSubmitted(returnOrder.id);
+                  setSubmittingReturn(false);
+                  setReturnOrder(null);
+                }}
+                className="w-full bg-black hover:bg-gray-900 text-white text-sm font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-colors disabled:opacity-40">
+                {submittingReturn ? <Loader2 className="w-4 h-4 animate-spin" /> : <RotateCcw className="w-4 h-4" />}
+                Submit Return Request
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

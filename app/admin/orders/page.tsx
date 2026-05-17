@@ -1,74 +1,89 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { Order } from '@/lib/db';
-import { Loader2, Menu, X, Eye, TrendingUp, Clock, CheckCircle, DollarSign, Users, ShoppingBag } from 'lucide-react';
+import { Loader2, Menu, TrendingUp, Clock, CheckCircle, PoundSterling, ShoppingBag, Search, RotateCcw, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import AdminSidebar from '@/components/AdminSidebar';
 
-const STATUSES = ['pending', 'confirmed', 'processing', 'dispatched', 'delivered', 'cancelled'];
+interface Order {
+  id: string; reference?: string; customerName: string; email: string;
+  total: number; status: string; createdAt: string; paymentMethod?: string;
+}
+interface ReturnRequest {
+  id: string; orderId: string; orderReference: string; customerName: string;
+  email: string; reason: string; status: string; createdAt: string;
+}
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:    'bg-yellow-100 text-yellow-700',
-  confirmed:  'bg-blue-100 text-blue-700',
-  processing: 'bg-purple-100 text-purple-700',
-  dispatched: 'bg-indigo-100 text-indigo-700',
-  delivered:  'bg-gray-100 text-gray-800',
-  cancelled:  'bg-red-100 text-red-700',
+  pending:         'bg-yellow-100 text-yellow-700',
+  pending_payment: 'bg-orange-100 text-orange-700',
+  confirmed:       'bg-blue-100 text-blue-700',
+  processing:      'bg-purple-100 text-purple-700',
+  dispatched:      'bg-indigo-100 text-indigo-700',
+  delivered:       'bg-green-100 text-green-700',
+  cancelled:       'bg-red-100 text-red-700',
 };
+
+const RETURN_STYLES: Record<string, string> = {
+  pending:  'bg-yellow-100 text-yellow-700',
+  approved: 'bg-green-100 text-green-700',
+  rejected: 'bg-red-100 text-red-700',
+};
+
+type Tab = 'all' | 'awaiting' | 'delivered' | 'returns';
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [returns, setReturns] = useState<ReturnRequest[]>([]);
   const [loading, setLoading] = useState(true);
-  const [updating, setUpdating] = useState<string | null>(null);
-  const [selected, setSelected] = useState<Order | null>(null);
-  const [items, setItems] = useState<any[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [trackingForm, setTrackingForm] = useState({ courier: '', trackingNumber: '' });
-  const [savingTracking, setSavingTracking] = useState(false);
+  const [tab, setTab] = useState<Tab>('all');
+  const [search, setSearch] = useState('');
+  const [updatingReturn, setUpdatingReturn] = useState<string | null>(null);
 
-  const load = () => {
+  const load = async () => {
     setLoading(true);
-    fetch('/api/orders')
-      .then(r => r.json())
-      .then(data => { setOrders(Array.isArray(data) ? data.reverse() : []); setLoading(false); });
+    const [ordersRes, returnsRes] = await Promise.all([
+      fetch('/api/orders').then(r => r.json()),
+      fetch('/api/returns').then(r => r.json()),
+    ]);
+    setOrders(Array.isArray(ordersRes) ? ordersRes : []);
+    setReturns(Array.isArray(returnsRes) ? returnsRes : []);
+    setLoading(false);
   };
 
   useEffect(() => { load(); }, []);
 
-  const handleStatus = async (id: string, status: string) => {
-    setUpdating(id);
-    await fetch(`/api/orders/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status }) });
-    setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
-    setUpdating(null);
-  };
-
-  const viewOrder = async (order: Order) => {
-    setSelected(order);
-    setItems([]);
-    setTrackingForm({ courier: order.courier || '', trackingNumber: order.trackingNumber || '' });
-    const res = await fetch(`/api/orders/${order.id}`);
-    setItems(await res.json());
-  };
-
-  const saveTracking = async () => {
-    if (!selected) return;
-    setSavingTracking(true);
-    await fetch(`/api/orders/${selected.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(trackingForm),
-    });
-    setOrders(prev => prev.map(o => o.id === selected.id ? { ...o, ...trackingForm } : o));
-    setSelected(prev => prev ? { ...prev, ...trackingForm } : null);
-    setSavingTracking(false);
+  const handleReturnStatus = async (id: string, status: string) => {
+    setUpdatingReturn(id);
+    await fetch('/api/returns', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id, status }) });
+    setReturns(prev => prev.map(r => r.id === id ? { ...r, status } : r));
+    setUpdatingReturn(null);
   };
 
   const stats = {
     total: orders.length,
-    pending: orders.filter(o => o.status === 'pending').length,
+    awaiting: orders.filter(o => ['pending','pending_payment','confirmed','processing'].includes(o.status)).length,
     delivered: orders.filter(o => o.status === 'delivered').length,
     revenue: orders.filter(o => o.status !== 'cancelled').reduce((s, o) => s + o.total, 0),
   };
+
+  const AWAITING = ['pending','pending_payment','confirmed','processing'];
+  const q = search.toLowerCase();
+
+  const filteredOrders = orders.filter(o => {
+    const matchTab = tab === 'all' ? true
+      : tab === 'awaiting' ? AWAITING.includes(o.status)
+      : tab === 'delivered' ? o.status === 'delivered'
+      : false;
+    const matchSearch = !q || o.customerName?.toLowerCase().includes(q) || o.email?.toLowerCase().includes(q)
+      || (o.reference || '').toLowerCase().includes(q);
+    return matchTab && matchSearch;
+  });
+
+  const filteredReturns = returns.filter(r =>
+    !q || r.customerName?.toLowerCase().includes(q) || r.email?.toLowerCase().includes(q)
+      || r.orderReference?.toLowerCase().includes(q)
+  );
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -80,209 +95,200 @@ export default function AdminOrdersPage() {
             <Menu className="w-5 h-5 text-gray-600" />
           </button>
           <h1 className="font-bold text-gray-900">Orders</h1>
-          <button onClick={load} className="ml-auto text-xs text-gray-500 hover:text-black font-medium">
+          <button onClick={load} className="ml-auto text-xs text-gray-500 hover:text-black font-medium px-3 py-1.5 border border-gray-200 rounded-lg hover:border-gray-400 transition-colors">
             Refresh
           </button>
         </header>
 
-        <main className="flex-1 p-4 sm:p-6">
-          {/* Stats grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-6">
+        <main className="flex-1 p-4 sm:p-6 space-y-5">
+          {/* Stats */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
               { label: 'Total Orders', value: stats.total, icon: TrendingUp, color: 'text-gray-900', bg: 'bg-gray-100' },
-              { label: 'Pending', value: stats.pending, icon: Clock, color: 'text-yellow-700', bg: 'bg-yellow-100' },
+              { label: 'Awaiting Despatch', value: stats.awaiting, icon: Clock, color: 'text-yellow-700', bg: 'bg-yellow-100' },
               { label: 'Delivered', value: stats.delivered, icon: CheckCircle, color: 'text-green-700', bg: 'bg-green-100' },
-              { label: 'Revenue', value: `£${stats.revenue.toFixed(2)}`, icon: DollarSign, color: 'text-gray-900', bg: 'bg-gray-100' },
+              { label: 'Revenue', value: `£${stats.revenue.toFixed(2)}`, icon: PoundSterling, color: 'text-gray-900', bg: 'bg-gray-100' },
             ].map(s => (
-              <div key={s.label} className="bg-white border border-gray-200 p-4 rounded-sm">
+              <div key={s.label} className="bg-white border border-gray-200 rounded-xl p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <div className={`w-7 h-7 ${s.bg} flex items-center justify-center rounded`}>
+                  <div className={`w-7 h-7 ${s.bg} flex items-center justify-center rounded-lg`}>
                     <s.icon className={`w-3.5 h-3.5 ${s.color}`} />
                   </div>
                   <p className="text-xs text-gray-500">{s.label}</p>
                 </div>
-                <p className={`text-xl font-bold ${s.color}`}>{s.value}</p>
+                <p className={`text-2xl font-bold ${s.color}`}>{s.value}</p>
               </div>
             ))}
           </div>
 
-          {loading ? (
-            <div className="flex items-center justify-center py-24">
-              <Loader2 className="w-6 h-6 animate-spin text-gray-400" />
+          {/* Tabs + Search */}
+          <div className="flex flex-col sm:flex-row gap-3">
+            <div className="flex bg-white border border-gray-200 rounded-xl p-1 gap-0.5">
+              {([
+                { key: 'all', label: 'All Orders' },
+                { key: 'awaiting', label: 'Awaiting Despatch' },
+                { key: 'delivered', label: 'Delivered' },
+                { key: 'returns', label: `Returns${returns.filter(r => r.status === 'pending').length > 0 ? ` (${returns.filter(r => r.status === 'pending').length})` : ''}` },
+              ] as { key: Tab; label: string }[]).map(t => (
+                <button key={t.key} onClick={() => setTab(t.key)}
+                  className={`px-3 py-2 text-xs font-semibold rounded-lg transition-all whitespace-nowrap ${
+                    tab === t.key ? 'bg-black text-white' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'
+                  }`}>
+                  {t.label}
+                </button>
+              ))}
             </div>
-          ) : (
-            <>
-              {/* Desktop table */}
-              <div className="hidden sm:block bg-white border border-gray-200 overflow-hidden">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <input
+                value={search} onChange={e => setSearch(e.target.value)}
+                placeholder="Search by name, email or order ID..."
+                className="w-full pl-9 pr-4 py-2.5 text-sm border border-gray-200 rounded-xl bg-white focus:outline-none focus:border-black transition-colors"
+              />
+            </div>
+          </div>
+
+          {/* Content */}
+          {loading ? (
+            <div className="flex justify-center py-24"><Loader2 className="w-6 h-6 animate-spin text-gray-400" /></div>
+          ) : tab === 'returns' ? (
+            /* Returns tab */
+            <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+              {filteredReturns.length === 0 ? (
+                <div className="text-center py-16 text-gray-400">
+                  <RotateCcw className="w-10 h-10 mx-auto mb-3 text-gray-200" />
+                  <p className="text-sm">No return requests yet.</p>
+                </div>
+              ) : (
                 <table className="w-full text-sm">
                   <thead className="bg-gray-50 border-b border-gray-200">
                     <tr>
-                      {['Order ID', 'Customer', 'Total', 'Date', 'Status', ''].map(h => (
+                      {['Order', 'Customer', 'Reason', 'Date', 'Status', ''].map(h => (
                         <th key={h} className="text-left px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">{h}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {orders.map(order => (
-                      <tr key={order.id} className="hover:bg-gray-50">
-                        <td className="px-4 py-3 font-mono text-xs text-gray-500">{order.id}</td>
+                    {filteredReturns.map(r => (
+                      <tr key={r.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 font-mono text-xs font-bold text-gray-900">#{r.orderReference || r.orderId.slice(0,8)}</td>
                         <td className="px-4 py-3">
-                          <p className="font-medium text-gray-900">{order.customerName}</p>
-                          <p className="text-gray-400 text-xs">{order.email}</p>
+                          <p className="font-medium text-gray-900">{r.customerName}</p>
+                          <p className="text-gray-400 text-xs">{r.email}</p>
                         </td>
-                        <td className="px-4 py-3 font-bold text-gray-900">£{order.total.toFixed(2)}</td>
-                        <td className="px-4 py-3 text-gray-500 text-xs">{new Date(order.createdAt).toLocaleDateString('en-GB')}</td>
-                        <td className="px-4 py-3">
-                          <select
-                            value={order.status}
-                            disabled={updating === order.id}
-                            onChange={e => handleStatus(order.id, e.target.value)}
-                            className={`text-xs font-semibold px-2.5 py-1 rounded-full border-0 cursor-pointer outline-none ${STATUS_STYLES[order.status] || 'bg-gray-100 text-gray-600'}`}
-                          >
-                            {STATUSES.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
-                          </select>
+                        <td className="px-4 py-3 text-gray-600 max-w-xs">
+                          <p className="truncate text-xs">{r.reason}</p>
+                        </td>
+                        <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">
+                          {new Date(r.createdAt).toLocaleDateString('en-GB')}
                         </td>
                         <td className="px-4 py-3">
-                          <button onClick={() => viewOrder(order)} className="p-2 hover:bg-gray-100 text-gray-600 rounded transition-colors">
-                            <Eye className="w-4 h-4" />
-                          </button>
+                          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${RETURN_STYLES[r.status] || 'bg-gray-100 text-gray-600'}`}>
+                            {r.status.charAt(0).toUpperCase() + r.status.slice(1)}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          {r.status === 'pending' && (
+                            <div className="flex gap-1.5">
+                              <button onClick={() => handleReturnStatus(r.id, 'approved')} disabled={updatingReturn === r.id}
+                                className="text-xs px-2.5 py-1 bg-green-50 text-green-700 hover:bg-green-100 rounded-lg font-medium transition-colors">
+                                Approve
+                              </button>
+                              <button onClick={() => handleReturnStatus(r.id, 'rejected')} disabled={updatingReturn === r.id}
+                                className="text-xs px-2.5 py-1 bg-red-50 text-red-700 hover:bg-red-100 rounded-lg font-medium transition-colors">
+                                Reject
+                              </button>
+                            </div>
+                          )}
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                {orders.length === 0 && (
+              )}
+            </div>
+          ) : (
+            /* Orders table */
+            <>
+              <div className="hidden sm:block bg-white border border-gray-200 rounded-xl overflow-hidden">
+                {filteredOrders.length === 0 ? (
                   <div className="text-center py-16 text-gray-400">
                     <ShoppingBag className="w-10 h-10 mx-auto mb-3 text-gray-200" />
-                    <p className="text-sm">No orders yet.</p>
+                    <p className="text-sm">{search ? 'No orders match your search.' : 'No orders yet.'}</p>
                   </div>
+                ) : (
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 border-b border-gray-200">
+                      <tr>
+                        {['Order ID', 'Customer', 'Total', 'Date', 'Status', ''].map(h => (
+                          <th key={h} className="text-left px-4 py-3 text-xs font-bold text-gray-500 uppercase tracking-wide">{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {filteredOrders.map(order => (
+                        <tr key={order.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3">
+                            <span className="font-bold text-gray-900 font-mono text-sm">
+                              #{order.reference || order.id.slice(0, 8)}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <p className="font-medium text-gray-900">{order.customerName}</p>
+                            <p className="text-gray-400 text-xs">{order.email}</p>
+                          </td>
+                          <td className="px-4 py-3 font-bold text-gray-900">£{order.total.toFixed(2)}</td>
+                          <td className="px-4 py-3 text-gray-500 text-xs whitespace-nowrap">
+                            {new Date(order.createdAt).toLocaleDateString('en-GB')}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLES[order.status] || 'bg-gray-100 text-gray-600'}`}>
+                              {order.status === 'pending_payment' ? 'Awaiting Payment' : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <Link href={`/admin/orders/${order.id}`}
+                              className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-black transition-colors px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg">
+                              View <ChevronRight className="w-3.5 h-3.5" />
+                            </Link>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 )}
               </div>
 
-              {/* Mobile cards */}
+              {/* Mobile */}
               <div className="sm:hidden space-y-3">
-                {orders.length === 0 ? (
-                  <div className="text-center py-16 bg-white border border-gray-200 text-gray-400">
+                {filteredOrders.length === 0 ? (
+                  <div className="text-center py-16 bg-white border border-gray-200 rounded-xl text-gray-400">
                     <ShoppingBag className="w-10 h-10 mx-auto mb-3 text-gray-200" />
-                    <p className="text-sm">No orders yet.</p>
+                    <p className="text-sm">{search ? 'No orders match.' : 'No orders yet.'}</p>
                   </div>
-                ) : orders.map(order => (
-                  <div key={order.id} className="bg-white border border-gray-200 p-4">
-                    <div className="flex items-start justify-between mb-3">
+                ) : filteredOrders.map(order => (
+                  <Link key={order.id} href={`/admin/orders/${order.id}`}
+                    className="block bg-white border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
+                    <div className="flex items-start justify-between mb-2">
                       <div>
-                        <p className="font-medium text-gray-900 text-sm">{order.customerName}</p>
-                        <p className="text-xs text-gray-400 font-mono">{order.id}</p>
+                        <p className="font-bold text-gray-900 font-mono">#{order.reference || order.id.slice(0,8)}</p>
+                        <p className="text-sm text-gray-600 mt-0.5">{order.customerName}</p>
                       </div>
                       <p className="font-bold text-gray-900">£{order.total.toFixed(2)}</p>
                     </div>
                     <div className="flex items-center justify-between">
-                      <select
-                        value={order.status}
-                        disabled={updating === order.id}
-                        onChange={e => handleStatus(order.id, e.target.value)}
-                        className={`text-xs font-semibold px-2.5 py-1 rounded-full border-0 cursor-pointer outline-none ${STATUS_STYLES[order.status] || 'bg-gray-100 text-gray-600'}`}
-                      >
-                        {STATUSES.map(s => <option key={s} value={s}>{s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
-                      </select>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleDateString('en-GB')}</span>
-                        <button onClick={() => viewOrder(order)} className="p-1.5 hover:bg-gray-100 text-gray-600 rounded">
-                          <Eye className="w-4 h-4" />
-                        </button>
-                      </div>
+                      <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLES[order.status] || 'bg-gray-100 text-gray-600'}`}>
+                        {order.status === 'pending_payment' ? 'Awaiting Payment' : order.status.charAt(0).toUpperCase() + order.status.slice(1)}
+                      </span>
+                      <span className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleDateString('en-GB')}</span>
                     </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             </>
           )}
         </main>
       </div>
-
-      {/* Order detail modal */}
-      {selected && (
-        <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center p-0 sm:p-4 z-50">
-          <div className="bg-white rounded-t-xl sm:rounded-sm shadow-2xl w-full sm:max-w-md">
-            <div className="border-b border-gray-100 px-6 py-4 flex items-center justify-between">
-              <div>
-                <h2 className="font-bold text-gray-900 text-sm">{selected.id}</h2>
-                <p className="text-gray-400 text-xs">{new Date(selected.createdAt).toLocaleString('en-GB')}</p>
-              </div>
-              <button onClick={() => setSelected(null)} className="text-gray-400 hover:text-gray-600 p-1">
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="p-6 max-h-[70vh] overflow-y-auto">
-              <div className="bg-gray-50 border border-gray-100 rounded-sm p-4 space-y-1.5 text-sm mb-5">
-                <p><span className="text-gray-500">Customer:</span> <strong className="text-gray-900">{selected.customerName}</strong></p>
-                <p><span className="text-gray-500">Email:</span> <span className="text-gray-700">{selected.email}</span></p>
-                <p><span className="text-gray-500">Phone:</span> <span className="text-gray-700">{selected.phone}</span></p>
-                <p><span className="text-gray-500">Address:</span> <span className="text-gray-700">{selected.address}</span></p>
-                {selected.notes && <p><span className="text-gray-500">Notes:</span> <span className="text-gray-700">{selected.notes}</span></p>}
-              </div>
-              <div>
-                <h3 className="font-bold text-sm text-gray-900 mb-3">Items Ordered</h3>
-                <div className="space-y-2">
-                  {items.length === 0
-                    ? <div className="flex items-center gap-2 text-gray-400 text-sm"><Loader2 className="w-4 h-4 animate-spin" /> Loading items...</div>
-                    : items.map((item, i) => (
-                      <div key={i} className="flex justify-between text-sm border-b border-gray-50 pb-2">
-                        <span className="text-gray-700">{item.productName} <span className="text-gray-400">× {item.quantity}</span></span>
-                        <span className="font-semibold text-gray-900">£{(item.price * item.quantity).toFixed(2)}</span>
-                      </div>
-                    ))
-                  }
-                </div>
-                <div className="mt-4 pt-3 border-t border-gray-200 flex justify-between font-bold text-base">
-                  <span className="text-gray-700">Total</span>
-                  <span className="text-gray-900">£{selected.total.toFixed(2)}</span>
-                </div>
-              </div>
-
-              {/* Tracking section */}
-              <div className="mt-5 pt-5 border-t border-gray-100">
-                <h3 className="font-bold text-sm text-gray-900 mb-3">Tracking Information</h3>
-                <div className="space-y-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Courier</label>
-                    <select
-                      className="input text-sm"
-                      value={trackingForm.courier}
-                      onChange={e => setTrackingForm(f => ({ ...f, courier: e.target.value }))}
-                    >
-                      <option value="">Select courier...</option>
-                      <option value="royal_mail">Royal Mail</option>
-                      <option value="parcelforce">Parcelforce</option>
-                      <option value="evri">Evri</option>
-                      <option value="yodel">Yodel</option>
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-xs font-semibold text-gray-600 mb-1">Tracking Number</label>
-                    <input
-                      className="input text-sm font-mono"
-                      placeholder="e.g. AB123456789GB"
-                      value={trackingForm.trackingNumber}
-                      onChange={e => setTrackingForm(f => ({ ...f, trackingNumber: e.target.value }))}
-                    />
-                  </div>
-                  <button
-                    onClick={saveTracking}
-                    disabled={savingTracking}
-                    className="bg-black hover:bg-gray-900 text-white rounded-lg inline-flex items-center gap-1.5 transition-colors w-full justify-center py-2.5 text-sm">
-                    {savingTracking ? <><Loader2 className="w-4 h-4 animate-spin" /> Saving...</> : 'Save Tracking'}
-                  </button>
-                  {selected.courier && selected.trackingNumber && (
-                    <p className="text-xs text-gray-400 text-center">
-                      Currently: {selected.courier} &mdash; {selected.trackingNumber}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,13 +1,14 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Package, ShoppingBag, Users, Settings, Home, X, ExternalLink, Mail } from 'lucide-react';
+import { Package, ShoppingBag, Users, Settings, Home, X, ExternalLink, Mail, PoundSterling } from 'lucide-react';
 import Logo from './Logo';
 
 const LINKS = [
   { href: '/admin/products',  icon: Package,    label: 'Products' },
-  { href: '/admin/orders',    icon: ShoppingBag, label: 'Orders' },
-  { href: '/admin/customers', icon: Users,       label: 'Customers' },
+  { href: '/admin/orders',      icon: ShoppingBag,   label: 'Orders' },
+  { href: '/admin/payments',    icon: PoundSterling, label: 'Payments' },
+  { href: '/admin/customers',   icon: Users,         label: 'Customers' },
   { href: '/admin/subscribers', icon: Mail,        label: 'Subscribers' },
   { href: '/admin/settings',    icon: Settings,    label: 'Settings' },
 ];
@@ -35,7 +36,7 @@ export default function AdminSidebar({ open, onClose }: { open: boolean; onClose
         <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
           <p className="text-[10px] font-bold tracking-[0.15em] uppercase text-gray-400 px-3 mb-2">Menu</p>
           {LINKS.map(({ href, icon: Icon, label }) => {
-            const active = pathname === href;
+            const active = pathname === href || pathname.startsWith(href + '/');
             return (
               <Link key={href} href={href} onClick={onClose}
                 className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getOrders, createOrder } from '@/lib/db';
+import { getOrders, createOrder, getNextOrderRef } from '@/lib/db';
 import { sendOrderConfirmation, sendAdminOrderNotification } from '@/lib/email';
 import { getStripeSettings } from '@/lib/stripeConfig';
 
@@ -17,17 +17,10 @@ export async function GET(req: NextRequest) {
   }
 }
 
-function generateRef() {
-  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-  let r = 'TB-';
-  for (let i = 0; i < 6; i++) r += chars[Math.floor(Math.random() * chars.length)];
-  return r;
-}
-
 export async function POST(req: NextRequest) {
   try {
     const { order, items } = await req.json();
-    const ref = generateRef();
+    const ref = await getNextOrderRef();
     const orderId = await createOrder({ ...order, reference: ref }, items);
 
     if (order.email) {
