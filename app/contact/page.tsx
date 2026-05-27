@@ -77,8 +77,8 @@ export default function ContactPage() {
                 },
                 {
                   icon: MessageSquare,
-                  title: 'Fragrance Advice',
-                  desc: 'Not sure which scent to pick? We love helping.',
+                  title: 'Product Advice',
+                  desc: 'Not sure which product to choose? We love helping.',
                   value: 'eppa.shop.uk@gmail.com',
                   href: 'mailto:eppa.shop.uk@gmail.com',
                 },

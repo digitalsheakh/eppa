@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
       body: JSON.stringify({ password }),
     });
     if (res.ok) {
-      router.push('/admin/products');
+      router.push('/hello/products');
     } else {
       setError('Incorrect password. Please try again.');
       setLoading(false);

@@ -132,7 +132,7 @@ export default function AdminPaymentsPage() {
                 </div>
                 <div className="divide-y divide-gray-50">
                   {paid.slice(0, 20).map(order => (
-                    <Link key={order.id} href={`/admin/orders/${order.id}`}
+                    <Link key={order.id} href={`/hello/orders/${order.id}`}
                       className="px-5 py-3.5 flex items-center justify-between hover:bg-gray-50 transition-colors group">
                       <div>
                         <p className="text-sm font-semibold text-gray-900 font-mono">#{order.reference || order.id.slice(0,8)}</p>

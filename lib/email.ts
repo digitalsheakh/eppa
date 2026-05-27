@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
-const FROM = process.env.EMAIL_FROM || "Eppa's Shop <orders@eppa.shop>";
+const FROM = process.env.EMAIL_FROM || "Eppa's Shop <eppa.shop.uk@gmail.com>";
 
 interface OrderEmailData {
   customerName: string;
@@ -52,17 +52,17 @@ function orderEmailHtml(d: OrderEmailData): string {
       <table width="100%" cellpadding="0" cellspacing="0" style="max-width:560px">
 
         <!-- Header -->
-        <tr><td style="background:#1a5c38;border-radius:12px 12px 0 0;padding:32px;text-align:center">
-          <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:3px;color:#86efac;text-transform:uppercase">Order Confirmed</p>
+        <tr><td style="background:#000000;border-radius:12px 12px 0 0;padding:32px;text-align:center">
+          <p style="margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:3px;color:#999999;text-transform:uppercase">Order Confirmed</p>
           <h1 style="margin:0;font-size:32px;font-weight:800;color:#ffffff">Thank You, ${d.customerName.split(' ')[0]}!</h1>
-          <p style="margin:12px 0 0;font-size:14px;color:#bbf7d0">Your order has been placed successfully.</p>
+          <p style="margin:12px 0 0;font-size:14px;color:#cccccc">Your order has been placed successfully.</p>
         </td></tr>
 
         <!-- Reference badge -->
         <tr><td style="background:#ffffff;padding:24px 32px 0;text-align:center">
           <p style="margin:0 0 8px;font-size:13px;color:#6b7280">Your order reference number</p>
-          <div style="display:inline-block;background:#f0fdf4;border:2px solid #86efac;border-radius:8px;padding:10px 28px">
-            <span style="font-family:monospace;font-size:22px;font-weight:800;color:#15803d;letter-spacing:2px">${d.reference}</span>
+          <div style="display:inline-block;background:#f3f4f6;border:2px solid #000000;border-radius:8px;padding:10px 28px">
+            <span style="font-family:monospace;font-size:22px;font-weight:800;color:#000000;letter-spacing:2px">${d.reference}</span>
           </div>
           ${isBankTransfer ? '<p style="margin:10px 0 0;font-size:12px;color:#dc2626;font-weight:600">Use this reference when making your bank transfer.</p>' : '<p style="margin:10px 0 0;font-size:12px;color:#6b7280">Keep this for your records.</p>'}
         </td></tr>
@@ -103,8 +103,8 @@ function orderEmailHtml(d: OrderEmailData): string {
           </div>
 
           <!-- Payment status -->
-          <div style="margin-top:16px;padding:12px 16px;border-radius:8px;background:${isBankTransfer ? '#fffbeb' : '#f0fdf4'};border:1px solid ${isBankTransfer ? '#fde68a' : '#bbf7d0'}">
-            <p style="margin:0;font-size:13px;color:${isBankTransfer ? '#92400e' : '#15803d'};font-weight:600">
+          <div style="margin-top:16px;padding:12px 16px;border-radius:8px;background:${isBankTransfer ? '#fffbeb' : '#f3f4f6'};border:1px solid ${isBankTransfer ? '#fde68a' : '#000000'}">
+            <p style="margin:0;font-size:13px;color:${isBankTransfer ? '#92400e' : '#000000'};font-weight:600">
               ${isBankTransfer ? '⏳ Payment pending: awaiting bank transfer' : '✓ Payment received'}
             </p>
           </div>
@@ -112,8 +112,8 @@ function orderEmailHtml(d: OrderEmailData): string {
 
         <!-- Footer -->
         <tr><td style="background:#f3f4f6;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center">
-          <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Questions? Contact us at <a href="mailto:hello@eppa.shop" style="color:#15803d">hello@eppa.shop</a></p>
-          <p style="margin:0;font-size:12px;color:#9ca3af">Eppa's Shop</p>
+          <p style="margin:0 0 4px;font-size:13px;color:#6b7280">Questions? Contact us at <a href="mailto:eppa.shop.uk@gmail.com" style="color:#000000;font-weight:600">eppa.shop.uk@gmail.com</a></p>
+          <p style="margin:0;font-size:12px;color:#9ca3af">Eppa's Shop — Quality Products, Fast Delivery</p>
         </td></tr>
 
       </table>
@@ -156,15 +156,15 @@ export async function sendWelcomeEmail(name: string, email: string): Promise<voi
         </td></tr>
         <tr><td style="background:#ffffff;padding:32px">
           <p style="margin:0 0 16px;font-size:15px;color:#374151;line-height:1.6">
-            Thanks for joining us. You can now browse our full fragrance collection, track your orders, and save your delivery details for a faster checkout.
+            Thanks for joining us. You can now browse our full product collection, track your orders, and save your delivery details for a faster checkout.
           </p>
           <div style="text-align:center;margin:28px 0">
-            <a href="https://eppa.vercel.app/shop" style="background:#000;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700">Shop Now</a>
+            <a href="https://www.eppa.shop/shop" style="background:#000;color:#fff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:700">Shop Now</a>
           </div>
           <p style="margin:24px 0 0;font-size:13px;color:#9ca3af">If you didn't create this account, please ignore this email.</p>
         </td></tr>
         <tr><td style="background:#f3f4f6;border-radius:0 0 12px 12px;padding:20px 32px;text-align:center">
-          <p style="margin:0;font-size:12px;color:#9ca3af">Eppa's Shop &mdash; Premium Fragrances</p>
+          <p style="margin:0;font-size:12px;color:#9ca3af">Eppa's Shop &mdash; Quality Products, Fast Delivery</p>
         </td></tr>
       </table>
     </td></tr>
@@ -192,9 +192,9 @@ export async function sendAdminOrderNotification(data: OrderEmailData): Promise<
 
   const html = `<!DOCTYPE html><html><body style="font-family:sans-serif;background:#f9fafb;padding:24px">
   <div style="max-width:520px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;border:1px solid #e5e7eb">
-    <div style="background:#f26522;padding:24px;text-align:center">
-      <h1 style="margin:0;color:#fff;font-size:22px">New Order Received</h1>
-      <p style="margin:8px 0 0;color:#fff;font-size:14px;opacity:.9">Reference: <strong>${data.reference}</strong></p>
+    <div style="background:#000000;padding:24px;text-align:center">
+      <h1 style="margin:0;color:#fff;font-size:22px;font-weight:800">🛍️ New Order Received</h1>
+      <p style="margin:8px 0 0;color:#cccccc;font-size:14px">Reference: <strong style="color:#ffffff">${data.reference}</strong></p>
     </div>
     <div style="padding:24px">
       <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
@@ -202,7 +202,7 @@ export async function sendAdminOrderNotification(data: OrderEmailData): Promise<
         <tr><td style="font-size:13px;color:#6b7280;padding:4px 0">Email</td><td style="font-size:13px;color:#111">${data.customerEmail}</td></tr>
         <tr><td style="font-size:13px;color:#6b7280;padding:4px 0">Address</td><td style="font-size:13px;color:#111">${data.address}</td></tr>
         <tr><td style="font-size:13px;color:#6b7280;padding:4px 0">Payment</td><td style="font-size:13px;color:#111">${data.paymentMethod === 'bank_transfer' ? 'Bank Transfer' : 'Card'}</td></tr>
-        <tr><td style="font-size:13px;color:#6b7280;padding:4px 0">Total</td><td style="font-size:15px;font-weight:700;color:#f26522">£${data.total.toFixed(2)}</td></tr>
+        <tr><td style="font-size:13px;color:#6b7280;padding:4px 0">Total</td><td style="font-size:15px;font-weight:700;color:#000000">£${data.total.toFixed(2)}</td></tr>
       </table>
       <p style="font-size:13px;font-weight:600;color:#111;margin:0 0 8px">Items Ordered</p>
       <table style="width:100%;border-collapse:collapse">
@@ -214,7 +214,7 @@ export async function sendAdminOrderNotification(data: OrderEmailData): Promise<
         <tbody>${itemRows}</tbody>
       </table>
       <div style="margin-top:20px;text-align:center">
-        <a href="https://www.eppa.shop/admin/orders" style="background:#f26522;color:#fff;padding:10px 24px;border-radius:99px;text-decoration:none;font-size:13px;font-weight:600">View in Admin</a>
+        <a href="https://www.eppa.shop/hello/orders" style="background:#000000;color:#fff;padding:10px 24px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700">View in Admin Dashboard</a>
       </div>
     </div>
   </div>

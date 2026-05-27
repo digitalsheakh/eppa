@@ -3,7 +3,7 @@ import { getSubscribers } from '@/lib/db';
 import { Resend } from 'resend';
 
 const resend = process.env.RESEND_API_KEY ? new Resend(process.env.RESEND_API_KEY) : null;
-const FROM = process.env.EMAIL_FROM || "Eppa's Shop <orders@eppa.shop>";
+const FROM = process.env.EMAIL_FROM || "Eppa's Shop <eppa.shop.uk@gmail.com>";
 
 export async function POST(req: NextRequest) {
   if (!resend) return NextResponse.json({ error: 'Email not configured' }, { status: 500 });

@@ -247,7 +247,7 @@ export default function AdminOrdersPage() {
                             </span>
                           </td>
                           <td className="px-4 py-3">
-                            <Link href={`/admin/orders/${order.id}`}
+                            <Link href={`/hello/orders/${order.id}`}
                               className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-black transition-colors px-2.5 py-1.5 bg-gray-50 hover:bg-gray-100 rounded-lg">
                               View <ChevronRight className="w-3.5 h-3.5" />
                             </Link>
@@ -267,7 +267,7 @@ export default function AdminOrdersPage() {
                     <p className="text-sm">{search ? 'No orders match.' : 'No orders yet.'}</p>
                   </div>
                 ) : filteredOrders.map(order => (
-                  <Link key={order.id} href={`/admin/orders/${order.id}`}
+                  <Link key={order.id} href={`/hello/orders/${order.id}`}
                     className="block bg-white border border-gray-200 rounded-xl p-4 hover:border-gray-300 transition-colors">
                     <div className="flex items-start justify-between mb-2">
                       <div>

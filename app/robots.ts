@@ -6,7 +6,7 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin/', '/api/'],
+        disallow: ['/hello/', '/api/'],
       },
     ],
     sitemap: 'https://www.eppas.shop/sitemap.xml',

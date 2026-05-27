@@ -18,8 +18,8 @@ export const metadata: Metadata = {
   description:
     'A New Era of Online Shopping! Trusted quality, fast delivery, and exceptional customer support. We make online shopping easy, convenient, and reliable.',
   keywords: [
-    "eppa's shop", 'eppa shop', 'eppa.shop', 'fragrances uk', 'buy fragrances online',
-    'online shopping uk', 'fast delivery uk', 'quality fragrances', 'perfume uk',
+    "eppa's shop", 'eppa shop', 'eppa.shop', 'bags uk', 'carrier bags', 'paper bags',
+    'plastic bags', 'wet towels', 'food packaging', 'online shopping uk', 'fast delivery uk',
   ],
   authors: [{ name: "Eppa's Shop", url: SITE_URL }],
   creator: "Eppa's Shop",

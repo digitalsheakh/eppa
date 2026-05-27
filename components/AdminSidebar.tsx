@@ -5,12 +5,12 @@ import { Package, ShoppingBag, Users, Settings, Home, X, ExternalLink, Mail, Pou
 import Logo from './Logo';
 
 const LINKS = [
-  { href: '/admin/products',  icon: Package,    label: 'Products' },
-  { href: '/admin/orders',      icon: ShoppingBag,   label: 'Orders' },
-  { href: '/admin/payments',    icon: PoundSterling, label: 'Payments' },
-  { href: '/admin/customers',   icon: Users,         label: 'Customers' },
-  { href: '/admin/subscribers', icon: Mail,        label: 'Subscribers' },
-  { href: '/admin/settings',    icon: Settings,    label: 'Settings' },
+  { href: '/hello/products',  icon: Package,    label: 'Products' },
+  { href: '/hello/orders',      icon: ShoppingBag,   label: 'Orders' },
+  { href: '/hello/payments',    icon: PoundSterling, label: 'Payments' },
+  { href: '/hello/customers',   icon: Users,         label: 'Customers' },
+  { href: '/hello/subscribers', icon: Mail,        label: 'Subscribers' },
+  { href: '/hello/settings',    icon: Settings,    label: 'Settings' },
 ];
 
 export default function AdminSidebar({ open, onClose }: { open: boolean; onClose: () => void }) {

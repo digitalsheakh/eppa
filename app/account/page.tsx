@@ -372,8 +372,8 @@ function AccountDashboard() {
                     {([
                       { key: 'displayName', label: 'Full Name', ph: 'John Smith', type: 'text' },
                       { key: 'phone', label: 'Phone Number', ph: '+44 7700 000000', type: 'tel' },
-                      { key: 'addressLine1', label: 'Address Line 1', ph: '123 High Street', type: 'text' },
-                      { key: 'addressLine2', label: 'Address Line 2 (optional)', ph: 'Flat 2', type: 'text' },
+                      { key: 'addressLine1', label: 'House Number / Name', ph: '123 or Flat 2', type: 'text' },
+                      { key: 'addressLine2', label: 'Street Name', ph: 'High Street', type: 'text' },
                       { key: 'city', label: 'City / Town', ph: 'London', type: 'text' },
                       { key: 'postcode', label: 'Postcode', ph: 'SW1A 1AA', type: 'text' },
                     ] as { key: keyof UserProfile; label: string; ph: string; type: string }[]).map(f => (

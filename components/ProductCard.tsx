@@ -19,7 +19,7 @@ export default function ProductCard({ product }: { product: Product }) {
     setTimeout(() => setAdded(false), 1600);
   };
 
-  const imgSrc = !imgError && product.image ? product.image : `https://placehold.co/400x400/f8f8f8/999?text=Fragrance`;
+  const imgSrc = !imgError && product.image ? product.image : `https://placehold.co/400x400/f8f8f8/999?text=Product`;
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl overflow-hidden flex flex-col group hover:border-gray-400 transition-colors">

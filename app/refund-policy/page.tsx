@@ -39,7 +39,7 @@ export default function RefundPolicyPage() {
             <section>
               <h2 className="text-base font-bold text-black mb-3">Non-Returnable Items</h2>
               <ul className="list-disc list-inside space-y-1.5">
-                <li>Opened or used fragrance bottles</li>
+                <li>Opened or used products (for hygiene reasons)</li>
                 <li>Items purchased on sale or with a discount code</li>
                 <li>Gift cards</li>
               </ul>
@@ -48,7 +48,7 @@ export default function RefundPolicyPage() {
             <section>
               <h2 className="text-base font-bold text-black mb-3">How to Request a Refund</h2>
               <ol className="list-decimal list-inside space-y-2">
-                <li>Contact us at <a href="mailto:support@eppa.shop" className="text-black font-semibold hover:underline">support@eppa.shop</a> with your order reference number.</li>
+                <li>Contact us at <a href="mailto:eppa.shop.uk@gmail.com" className="text-black font-semibold hover:underline">eppa.shop.uk@gmail.com</a> with your order reference number.</li>
                 <li>We will review your request within 1–2 business days.</li>
                 <li>If approved, we will provide return instructions and a return address.</li>
                 <li>Once we receive and inspect the item, your refund will be processed.</li>
@@ -77,7 +77,7 @@ export default function RefundPolicyPage() {
               <p>
                 For any refund queries, please reach out via our{' '}
                 <Link href="/contact" className="text-black font-semibold hover:underline">Contact page</Link>{' '}
-                or email <a href="mailto:support@eppa.shop" className="text-black font-semibold hover:underline">support@eppa.shop</a>.
+                or email <a href="mailto:eppa.shop.uk@gmail.com" className="text-black font-semibold hover:underline">eppa.shop.uk@gmail.com</a>.
               </p>
             </section>
           </div>

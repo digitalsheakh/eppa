@@ -21,7 +21,7 @@ export default function DeliveryPolicyPage() {
           {/* Quick info cards */}
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-10">
             {[
-              { icon: Truck,       title: 'Free Delivery', sub: 'On orders over £75' },
+              { icon: Truck,       title: 'Free Delivery', sub: 'On orders over £20' },
               { icon: Clock,       title: '1–3 Days',      sub: 'Standard delivery' },
               { icon: MapPin,      title: 'UK Only',       sub: 'We ship across the UK' },
             ].map(({ icon: Icon, title, sub }) => (
@@ -55,7 +55,7 @@ export default function DeliveryPolicyPage() {
                     <tr>
                       <td className="py-2.5 pr-4">Free Delivery</td>
                       <td className="py-2.5 pr-4">1–3 business days</td>
-                      <td className="py-2.5 font-semibold text-black">FREE on orders over £75</td>
+                      <td className="py-2.5 font-semibold text-black">FREE on orders over £20</td>
                     </tr>
                   </tbody>
                 </table>
@@ -107,7 +107,7 @@ export default function DeliveryPolicyPage() {
               <p>
                 If you have any delivery questions, please visit our{' '}
                 <Link href="/contact" className="text-black font-semibold hover:underline">Contact page</Link> or email{' '}
-                <a href="mailto:support@eppa.shop" className="text-black font-semibold hover:underline">support@eppa.shop</a>.
+                <a href="mailto:eppa.shop.uk@gmail.com" className="text-black font-semibold hover:underline">eppa.shop.uk@gmail.com</a>.
               </p>
             </section>
           </div>

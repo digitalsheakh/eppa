@@ -60,10 +60,10 @@ export default function Hero() {
               transition={{ duration: 0.5 }}
             >
               <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold text-black leading-tight tracking-tight mb-4 sm:mb-6">
-                Once Smelt<br />Never Forgotten
+                Quality Products<br />Delivered Fast
               </h1>
               <p className="text-sm sm:text-base text-gray-500 mb-6 sm:mb-8 max-w-sm mx-auto sm:mx-0">
-                Discover our exclusive collection of premium fragrances. Trusted quality, fast delivery.
+                A New Era of Online Shopping! Trusted quality, fast delivery, and exceptional customer support. We make online shopping easy, convenient, and reliable.
               </p>
               <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 justify-center sm:justify-start">
                 <Link href="/shop"
@@ -90,13 +90,13 @@ export default function Hero() {
                     <motion.img
                       key={idx}
                       src={images[idx]}
-                      alt="Eppa's Shop fragrance"
+                      alt="Eppa's Shop products"
                       custom={dir}
                       variants={variants}
                       initial="enter" animate="center" exit="exit"
                       transition={{ type: 'tween', duration: 0.35, ease: 'easeInOut' }}
                       className="absolute inset-0 w-full h-full object-cover"
-                      onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/600x600/f8f8f8/333?text=Fragrance'; }}
+                      onError={e => { (e.target as HTMLImageElement).src = 'https://placehold.co/600x600/f8f8f8/333?text=Product'; }}
                     />
                   </AnimatePresence>
                 ) : (
@@ -105,7 +105,7 @@ export default function Hero() {
                       <path d="M12 2C8 2 6 5 6 8c0 4 6 14 6 14s6-10 6-14c0-3-2-6-6-6z"/>
                       <circle cx="12" cy="8" r="2"/>
                     </svg>
-                    <p className="text-sm">Add fragrances in admin</p>
+                    <p className="text-sm">Add products in admin</p>
                   </div>
                 )}
                 {total > 1 && (

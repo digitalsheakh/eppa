@@ -66,7 +66,7 @@ export default function ProductsSection() {
         >
           <div>
             <p className="text-xs font-bold tracking-[0.2em] uppercase text-gray-400 mb-1.5">Collection</p>
-            <h2 className="text-2xl sm:text-3xl font-bold text-black">Featured Fragrances</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-black">Featured Products</h2>
           </div>
           {!loading && products.length > 0 && (
             <Link href="/shop"

@@ -3,26 +3,26 @@ import { motion } from 'framer-motion';
 
 const REVIEWS = [
   {
-    title: 'Amazing Fragrance',
-    text: 'The scent is absolutely incredible. Long lasting and exactly as described. Will definitely be ordering again!',
+    title: 'Excellent Quality',
+    text: 'The products are top quality and exactly as described. Fast delivery and great prices. Will definitely be ordering again!',
     name: 'Sophie R.',
     time: '2 days ago',
   },
   {
     title: 'Fast Delivery',
-    text: 'Ordered in the morning and it arrived the next day. The fragrance is beautiful and the packaging was lovely.',
+    text: 'Ordered in the morning and it arrived the next day. Perfect quality and the packaging was excellent.',
     name: 'James K.',
     time: '4 days ago',
   },
   {
     title: 'Highly Recommend',
-    text: 'Genuinely one of the best fragrances I\'ve tried. Great value and the customer service was excellent.',
+    text: 'Great selection of products at competitive prices. Great value and the customer service was excellent.',
     name: 'Priya M.',
     time: '1 week ago',
   },
   {
     title: 'Love It',
-    text: 'Perfect gift idea. The scent is unique and lasts all day. Very happy with my purchase.',
+    text: 'Perfect for my business needs. High quality products at great prices. Very happy with my purchase.',
     name: 'Daniel T.',
     time: '3 days ago',
   },

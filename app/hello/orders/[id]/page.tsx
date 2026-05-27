@@ -77,7 +77,7 @@ export default function OrderDetailPage() {
           <button onClick={() => setSidebarOpen(true)} className="md:hidden p-1.5 hover:bg-gray-100 rounded">
             <Menu className="w-5 h-5 text-gray-600" />
           </button>
-          <button onClick={() => router.push('/admin/orders')} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-black transition-colors">
+          <button onClick={() => router.push('/hello/orders')} className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-black transition-colors">
             <ArrowLeft className="w-4 h-4" /> Orders
           </button>
           <span className="text-gray-300">/</span>

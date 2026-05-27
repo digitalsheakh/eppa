@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 
 export async function GET() {
   const key = process.env.RESEND_API_KEY;
-  const from = process.env.EMAIL_FROM || "Eppa's Shop <onboarding@resend.dev>";
+  const from = process.env.EMAIL_FROM || "Eppa's Shop <eppa.shop.uk@gmail.com>";
   const to = process.env.ADMIN_EMAIL || 'eppa.shop.uk@gmail.com';
 
   if (!key) {

@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import {
-  CheckCircle2, Loader2, ShoppingBag, CreditCard, Building2, Copy, Check,
+  CheckCircle2, Loader2, CreditCard, Copy, Check,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { loadStripe } from '@stripe/stripe-js';
@@ -55,8 +55,8 @@ function DeliveryFields({ form, onChange }: { form: DeliveryForm; onChange: (f: 
         {inp('phone', 'Phone Number', true, '+44 7700 000000')}
         {inp('email', 'Email Address', false, 'john@example.com')}
       </div>
-      {inp('addressLine1', 'Address Line 1', true, '123 High Street')}
-      {inp('addressLine2', 'Address Line 2', false, 'Flat 2')}
+      {inp('addressLine1', 'House Number / Name', true, '123 or Flat 2')}
+      {inp('addressLine2', 'Street Name', true, 'High Street')}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {inp('city', 'City / Town', true, 'London')}
         {inp('postcode', 'Postcode', true, 'SW1A 1AA')}
@@ -97,54 +97,57 @@ function StripeForm({ total, delivery, form, onSuccess }: {
     setLoading(true);
     setError('');
 
-    const { error: submitErr } = await elements.submit();
-    if (submitErr) { setError(submitErr.message ?? 'Payment error'); setLoading(false); return; }
+    try {
+      const { error: submitErr } = await elements.submit();
+      if (submitErr) { 
+        setError(submitErr.message ?? 'Payment error'); 
+        setLoading(false); 
+        return; 
+      }
 
-    // Create order first to get reference
-    const orderRes = await fetch('/api/orders', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        order: {
-          ...form,
-          address: `${form.addressLine1}${form.addressLine2 ? ', ' + form.addressLine2 : ''}, ${form.city}, ${form.postcode}`,
-          total: total + delivery,
-          paymentMethod: 'card',
+      // Confirm payment first
+      const { error: confirmErr } = await stripe.confirmPayment({
+        elements,
+        confirmParams: { 
+          return_url: `${window.location.origin}/checkout?success=true` 
         },
-        items: items.map(i => ({ productId: i.id, productName: i.name, quantity: i.quantity, price: i.price })),
-      }),
-    });
-    const orderData = await orderRes.json();
-    if (!orderRes.ok) { setError(orderData.error ?? 'Failed to create order'); setLoading(false); return; }
+        redirect: 'if_required',
+      });
 
-    // Create payment intent
-    const piRes = await fetch('/api/stripe/payment-intent', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        amount: total + delivery,
-        customerName: form.customerName,
-        customerEmail: form.email,
-      }),
-    });
-    const piData = await piRes.json();
-    if (!piRes.ok || !piData.clientSecret) { setError(piData.error ?? 'Payment setup failed'); setLoading(false); return; }
+      if (confirmErr) {
+        setError(confirmErr.message ?? 'Payment failed');
+        setLoading(false);
+        return;
+      }
 
-    const { error: confirmErr } = await stripe.confirmPayment({
-      elements,
-      clientSecret: piData.clientSecret,
-      confirmParams: { return_url: `${window.location.origin}/checkout?success=true` },
-      redirect: 'if_required',
-    });
+      // Create order after successful payment
+      const orderRes = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          order: {
+            ...form,
+            address: `${form.addressLine1}${form.addressLine2 ? ', ' + form.addressLine2 : ''}, ${form.city}, ${form.postcode}`,
+            total: total + delivery,
+            paymentMethod: 'card',
+          },
+          items: items.map(i => ({ productId: i.id, productName: i.name, quantity: i.quantity, price: i.price })),
+        }),
+      });
+      
+      const orderData = await orderRes.json();
+      if (!orderRes.ok) { 
+        setError(orderData.error ?? 'Failed to create order'); 
+        setLoading(false); 
+        return; 
+      }
 
-    if (confirmErr) {
-      setError(confirmErr.message ?? 'Payment failed');
+      clearCart();
+      onSuccess(orderData.reference);
+    } catch (err: any) {
+      setError(err.message ?? 'Something went wrong');
       setLoading(false);
-      return;
     }
-
-    clearCart();
-    onSuccess(orderData.reference);
   };
 
   return (
@@ -161,93 +164,9 @@ function StripeForm({ total, delivery, form, onSuccess }: {
   );
 }
 
-// ─── Bank transfer form ───────────────────────────────────────────────────────
-
-function BankTransferForm({ total, delivery, form, onSuccess }: {
-  total: number;
-  delivery: number;
-  form: DeliveryForm;
-  onSuccess: (ref: string, bank: BankDetails) => void;
-}) {
-  const { items, clearCart } = useCartStore();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [bank, setBank] = useState<BankDetails | null>(null);
-
-  useEffect(() => {
-    fetch('/api/stripe/bank-details').then(r => r.json()).then(setBank);
-  }, []);
-
-  const handlePlaceOrder = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    try {
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          order: {
-            ...form,
-            address: `${form.addressLine1}${form.addressLine2 ? ', ' + form.addressLine2 : ''}, ${form.city}, ${form.postcode}`,
-            total: total + delivery,
-            paymentMethod: 'bank_transfer',
-            status: 'pending_payment',
-          },
-          items: items.map(i => ({ productId: i.id, productName: i.name, quantity: i.quantity, price: i.price })),
-        }),
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
-      clearCart();
-      onSuccess(data.reference, bank ?? {} as BankDetails);
-    } catch (err: any) {
-      setError(err.message ?? 'Something went wrong');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handlePlaceOrder} className="space-y-4">
-      {bank && (bank.accountName || bank.accountNumber) && (
-        <div className="bg-blue-50 border border-blue-200 rounded-sm p-4 space-y-2 text-sm">
-          <p className="font-semibold text-blue-900 mb-2">Bank Transfer Details</p>
-          {bank.bankName && <div className="flex justify-between"><span className="text-blue-700">Bank</span><span className="font-medium text-blue-900">{bank.bankName}</span></div>}
-          {bank.accountName && <div className="flex justify-between"><span className="text-blue-700">Account Name</span><span className="font-medium text-blue-900">{bank.accountName}</span></div>}
-          {bank.accountNumber && <div className="flex justify-between"><span className="text-blue-700">Account Number</span><span className="font-mono font-medium text-blue-900">{bank.accountNumber}</span></div>}
-          {bank.sortCode && <div className="flex justify-between"><span className="text-blue-700">Sort Code</span><span className="font-mono font-medium text-blue-900">{bank.sortCode}</span></div>}
-          <p className="text-xs text-blue-600 pt-2 border-t border-blue-200">Your unique order reference will be shown after placing the order. Use it as the payment reference.</p>
-        </div>
-      )}
-      <p className="text-sm text-gray-600">Place your order now and complete the bank transfer using your order reference number. Your order will be processed once payment is received.</p>
-      {error && <p className="text-sm text-red-600 bg-red-50 border border-red-100 px-3 py-2 rounded-sm">{error}</p>}
-      <button type="submit" disabled={loading}
-        className="btn-primary w-full justify-center py-4 text-sm disabled:opacity-50 disabled:cursor-not-allowed">
-        {loading
-          ? <><Loader2 className="w-4 h-4 animate-spin" /> Placing Order...</>
-          : <><Building2 className="w-4 h-4" /> Place Order · £{(total + delivery).toFixed(2)}</>}
-      </button>
-    </form>
-  );
-}
-
-// ─── Types ────────────────────────────────────────────────────────────────────
-
-interface BankDetails {
-  bankName: string;
-  accountName: string;
-  accountNumber: string;
-  sortCode: string;
-}
-
 // ─── Success screen ───────────────────────────────────────────────────────────
 
-function SuccessScreen({ reference, paymentMethod, bank }: {
-  reference: string;
-  paymentMethod: 'card' | 'bank';
-  bank: BankDetails | null;
-}) {
+function SuccessScreen({ reference }: { reference: string }) {
   const router = useRouter();
   const [copied, setCopied] = useState(false);
 
@@ -277,30 +196,7 @@ function SuccessScreen({ reference, paymentMethod, bank }: {
             </button>
           </div>
 
-          {paymentMethod === 'bank' && bank && (bank.accountName || bank.accountNumber) && (
-            <div className="bg-amber-50 border border-amber-200 rounded-sm p-4 text-left mb-6">
-              <p className="text-sm font-bold text-amber-900 mb-3">Complete Your Bank Transfer</p>
-              <div className="space-y-1.5 text-sm">
-                {bank.bankName && <div className="flex justify-between"><span className="text-amber-700">Bank</span><span className="font-medium text-amber-900">{bank.bankName}</span></div>}
-                {bank.accountName && <div className="flex justify-between"><span className="text-amber-700">Account Name</span><span className="font-medium text-amber-900">{bank.accountName}</span></div>}
-                {bank.accountNumber && <div className="flex justify-between"><span className="text-amber-700">Account Number</span><span className="font-mono font-bold text-amber-900">{bank.accountNumber}</span></div>}
-                {bank.sortCode && <div className="flex justify-between"><span className="text-amber-700">Sort Code</span><span className="font-mono font-bold text-amber-900">{bank.sortCode}</span></div>}
-                <div className="flex justify-between pt-2 border-t border-amber-200">
-                  <span className="text-amber-700">Reference</span>
-                  <span className="font-mono font-bold text-amber-900">{reference}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-amber-700">Amount</span>
-                  <span className="font-bold text-amber-900">£{/* shown in parent */}</span>
-                </div>
-              </div>
-              <p className="text-xs text-amber-700 mt-3">⚠️ Use <strong>{reference}</strong> as your payment reference so we can match your transfer.</p>
-            </div>
-          )}
-
-          {paymentMethod === 'card' && (
-            <p className="text-sm text-gray-500 mb-6">Payment confirmed. We'll process your order and be in touch shortly.</p>
-          )}
+          <p className="text-sm text-gray-500 mb-6">Payment confirmed. We'll process your order and be in touch shortly.</p>
 
           <button onClick={() => router.push('/shop')} className="btn-primary w-full justify-center">
             Continue Shopping
@@ -320,11 +216,11 @@ export default function CheckoutPage() {
   const subtotal = total();
   const delivery = subtotal >= 10 ? 0 : 2.99;
 
-  const [paymentMethod, setPaymentMethod] = useState<'card' | 'bank'>('card');
+  const [mounted, setMounted] = useState(false);
   const [stripePromise, setStripePromise] = useState<ReturnType<typeof loadStripe> | null>(null);
   const [clientSecret, setClientSecret] = useState('');
   const [loadingStripe, setLoadingStripe] = useState(true);
-  const [successData, setSuccessData] = useState<{ ref: string; method: 'card' | 'bank'; bank: BankDetails | null } | null>(null);
+  const [successData, setSuccessData] = useState<{ ref: string } | null>(null);
 
   const [form, setForm] = useState<DeliveryForm>({
     customerName: '',
@@ -336,6 +232,11 @@ export default function CheckoutPage() {
     postcode: '',
     notes: '',
   });
+
+  // Set mounted state
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Pre-fill from user profile
   useEffect(() => {
@@ -355,7 +256,7 @@ export default function CheckoutPage() {
 
   // Load Stripe publishable key and create payment intent
   useEffect(() => {
-    if (paymentMethod !== 'card') return;
+    if (!mounted) return;
     setLoadingStripe(true);
 
     fetch('/api/stripe/publishable-key')
@@ -375,10 +276,14 @@ export default function CheckoutPage() {
         setLoadingStripe(false);
       })
       .catch(() => setLoadingStripe(false));
-  }, [paymentMethod, subtotal, delivery]);
+  }, [mounted, subtotal, delivery]);
 
   if (successData) {
-    return <SuccessScreen reference={successData.ref} paymentMethod={successData.method} bank={successData.bank} />;
+    return <SuccessScreen reference={successData.ref} />;
+  }
+
+  if (!mounted) {
+    return null;
   }
 
   return (
@@ -417,40 +322,26 @@ export default function CheckoutPage() {
               <DeliveryFields form={form} onChange={setForm} />
             </div>
 
-            {/* Payment method selector */}
+            {/* Payment */}
             <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-6">
-              <p className="text-sm font-bold text-gray-900 mb-4 pb-3 border-b border-gray-100">Payment Method</p>
-              <div className="grid grid-cols-2 gap-3 mb-5">
-                <button type="button" onClick={() => setPaymentMethod('card')}
-                  className={`flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 p-3 rounded-xl border-2 text-xs sm:text-sm font-semibold transition-all text-center ${paymentMethod === 'card' ? 'border-black bg-gray-50 text-black' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}>
-                  <CreditCard className="w-5 h-5 shrink-0" />
-                  <span>Card / Apple & Google Pay</span>
-                </button>
-                <button type="button" onClick={() => setPaymentMethod('bank')}
-                  className={`flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 p-3 rounded-xl border-2 text-xs sm:text-sm font-semibold transition-all text-center ${paymentMethod === 'bank' ? 'border-black bg-gray-50 text-black' : 'border-gray-200 text-gray-600 hover:border-gray-300'}`}>
-                  <Building2 className="w-5 h-5 shrink-0" />
-                  <span>Bank Transfer</span>
-                </button>
-              </div>
-
-              {paymentMethod === 'card' && (
-                loadingStripe ? (
-                  <div className="flex justify-center py-6"><Loader2 className="w-5 h-5 animate-spin text-primary-600" /></div>
-                ) : stripePromise && clientSecret ? (
-                  <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe' } }}>
-                    <StripeForm total={subtotal} delivery={delivery} form={form}
-                      onSuccess={ref => setSuccessData({ ref, method: 'card', bank: null })} />
-                  </Elements>
-                ) : (
-                  <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
-                    Stripe is not configured yet. Go to <a href="/admin/settings" className="underline font-medium">Admin → Settings</a> to add your Stripe keys.
-                  </div>
-                )
-              )}
-
-              {paymentMethod === 'bank' && (
-                <BankTransferForm total={subtotal} delivery={delivery} form={form}
-                  onSuccess={(ref, bank) => setSuccessData({ ref, method: 'bank', bank })} />
+              <p className="text-sm font-bold text-gray-900 mb-4 pb-3 border-b border-gray-100">Payment</p>
+              
+              {!form.customerName || !form.phone || !form.addressLine1 || !form.addressLine2 || !form.city || !form.postcode ? (
+                <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 text-center">
+                  <p className="text-sm text-gray-600 mb-2">Please fill in your delivery details above to continue</p>
+                  <p className="text-xs text-gray-400">All required fields must be completed before payment</p>
+                </div>
+              ) : loadingStripe ? (
+                <div className="flex justify-center py-6"><Loader2 className="w-5 h-5 animate-spin text-primary-600" /></div>
+              ) : stripePromise && clientSecret ? (
+                <Elements stripe={stripePromise} options={{ clientSecret, appearance: { theme: 'stripe' } }}>
+                  <StripeForm total={subtotal} delivery={delivery} form={form}
+                    onSuccess={ref => setSuccessData({ ref })} />
+                </Elements>
+              ) : (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-sm text-amber-800">
+                  Stripe is not configured yet. Go to <a href="/hello/settings" className="underline font-medium">Admin → Settings</a> to add your Stripe keys.
+                </div>
               )}
             </div>
           </div>
